@@ -1,0 +1,21 @@
+---
+import '../styles/global.css';
+// Component Imports
+import Layout from '../layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Stack from '@/components/Stack.vue';
+import Contact from '@/components/Contact.vue';
+import Footer from '@/components/Footer.vue';
+import Experience from '@/components/Experience.vue';
+
+
+const currentPathFromAstro = Astro.url.pathname;
+---
+
+<Layout title="Poul's Portfolio">
+	<Navbar client:load currentPath={currentPathFromAstro} />
+    <Experience />
+    <Stack />
+    <Contact />    
+    <Footer />
+</Layout>

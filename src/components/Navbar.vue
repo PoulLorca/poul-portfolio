@@ -15,7 +15,7 @@
           <Button variant="ghost" asChild>
             <a
               class="transition-all duration-200 hover:text-primary hover:scale-110"
-              :href="isHomePage ? '#home' : '/lbrowser-site/#home'"
+              :href="isHomePage ? '#home' : '/#home'"
             >
               Home
             </a>
@@ -23,7 +23,7 @@
           <Button variant="ghost" asChild>
             <a
               class="transition-all duration-200 hover:text-primary hover:scale-110"
-              :href="isHomePage ? '#experience' : '/lbrowser-site/#experience'"
+              :href="isHomePage ? '#experience' : '/#experience'"
             >
               Experience
             </a>
@@ -31,7 +31,7 @@
           <Button variant="ghost" asChild>
             <a
               class="transition-all duration-200 hover:text-primary hover:scale-110"
-              :href="isHomePage ? '#projects' : '/lbrowser-site/#projects'"
+              :href="isHomePage ? '#projects' : '/#projects'"
             >
               Projects
             </a>
@@ -39,7 +39,7 @@
           <Button variant="ghost" asChild>
             <a
               class="transition-all duration-200 hover:text-primary hover:scale-110"
-              :href="isHomePage ? '#sponsors' : '/lbrowser-site/#sponsors'"
+              :href="isHomePage ? '/about-me' : '/lbrowser-site/about-me'"
             >
               About Me
             </a>
@@ -105,9 +105,7 @@ const props = defineProps<{
 
 const isHomePage = computed(() => {  
   return (
-    props.currentPath === "/" ||
-    props.currentPath === "/lbrowser-site" ||
-    props.currentPath === "/lbrowser-site/"
+    props.currentPath === "/"     
   );
 });
 
