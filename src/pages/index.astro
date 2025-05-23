@@ -4,6 +4,7 @@ import '../styles/global.css';
 import Layout from '../layouts/main.astro';
 import Navbar from '@/components/Navbar.vue';
 import Home from '@/components/Home.vue';
+import Experience from '@/components/Experience.vue';
 
 const currentPathFromAstro = Astro.url.pathname;
 
@@ -14,4 +15,5 @@ const currentPathFromAstro = Astro.url.pathname;
 <Layout title="Poul's Portfolio">
 	<Navbar client:load currentPath={currentPathFromAstro} />
 	<Home />
+	<Experience />
 </Layout>

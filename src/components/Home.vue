@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto max-w-5xl py-12 px-4">
+  <section class="container mx-auto max-w-5xl py-12 px-4" id="home">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card class="col-span-1 md:col-span-2 bg-card hover:shadow-lg transition-all">
             <div class="flex flex-col md:flex-row items-center md:items-start p-6 gap-6">
