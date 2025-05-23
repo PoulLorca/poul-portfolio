@@ -58,7 +58,7 @@
             <CardContent class="overflow-hidden">
                 <p>I love turning ideas into real projects. Here I show you some of the developmens I've worked on, applying technolohy, design, and lots of creativity. Check them out!</p>
             
-                <div class="mt-4 overflow-hidden rounded-lg shadow-md relative h-60 md:h-96">
+                <div class="mt-4 md:mt-10 overflow-hidden rounded-lg shadow-md relative h-60 md:h-96">
                     <img 
                     src="/projects.png" 
                     alt="Projects" 
@@ -89,32 +89,58 @@
       </Card>
 
       <div class="col-span-1 order-3 md:order-none grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card class="bg-card hover:shadow-lg transition-all">
+        <a 
+          href="https://github.com/poullorca" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="block"
+        >
+          <Card class="bg-card hover:shadow-lg transition-all overflow-hidden group relative cursor-pointer h-full">
+            <!-- GitHub icon background -->
+            <div class="absolute -right-20 -bottom-20 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Github class="w-70 h-70 text-primary" />
+            </div>
+            
+            <CardHeader>
+              <div class="flex items-center gap-3 mb-2">
+                <Github class="h-8 w-8 text-primary" />
+                <CardTitle class="text-2xl md:text-3xl font-bold">Open Source</CardTitle>
+              </div>
+              
+              <CardDescription class="text-base">
+                Check out my contributions and projects
+              </CardDescription>
+            </CardHeader>                        
+          </Card>
+        </a>
+
+        <Card class="bg-gradient-to-br from-card via-primary/5 to-card hover:shadow-lg transition-all overflow-hidden">
           <CardHeader>
-            <CardTitle>Card D</CardTitle>
-            <CardDescription>Mitad izquierda inferior derecha</CardDescription>
+            <CardTitle class="flex items-center">              
+              <span class="text-4xl font-bold">Beyond the Code</span>
+            </CardTitle>            
           </CardHeader>
           <CardContent>
-            <p>Comparte el espacio horizontal con Card E.</p>
+            <div class="flex flex-wrap gap-2 py-2">
+              <Badge varaint="outline" class="bg-primary/10 text-foreground border-primary px-4 py-2 text-sm">
+                Writing
+              </Badge>
+              <Badge varaint="outline" class="bg-primary/10 text-foreground border-primary px-4 py-2 text-sm">
+                Music
+              </Badge>              
+              <Badge varaint="outline" class="bg-primary/10 text-foreground border-primary px-4 py-2 text-sm">
+                Crafts
+              </Badge>
+            </div>
           </CardContent>
         </Card>
 
-        <Card class="bg-card hover:shadow-lg transition-all">
-          <CardHeader>
-            <CardTitle>Card E</CardTitle>
-            <CardDescription>Mitad derecha inferior derecha</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Comparte el espacio horizontal con Card D.</p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import {Card,CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
 import { Avatar } from '@/components/ui/avatar'
@@ -132,7 +158,9 @@ import {
     AppWindow,
     Database,
     ChartNetwork,
-    Cloud
+    Cloud,
+    Github,
+    Coffee
  } from "lucide-vue-next"; 
 
 const profileImage = 'profileImage.jpg';
