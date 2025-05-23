@@ -31,7 +31,7 @@
           <Button variant="ghost" asChild>
             <a
               class="transition-all duration-200 hover:text-primary hover:scale-110"
-              :href="isHomePage ? '#get-involved' : '/lbrowser-site/#get-involved'"
+              :href="isHomePage ? '#projects' : '/lbrowser-site/#projects'"
             >
               Projects
             </a>

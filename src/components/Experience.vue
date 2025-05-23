@@ -1,7 +1,10 @@
 <template>
   <section class="container mx-auto max-w-5xl py-12 px-4" id="experience">
     <div class="flex flex-col items-center mb-12 md:mb-16">
-      <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-white">Professional Experience</h2>
+      <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-3">
+        <Briefcase class="w-8 h-8 text-primary" />
+        Professional Experience
+      </h2>
     </div>
 
     <div class="relative"> 
@@ -32,6 +35,9 @@
 </template>
 
 <script setup lang="ts">
+import { Briefcase } from 'lucide-vue-next';
+
+
 const experience = [
     {
     role: "Senior Full Stack Developer",
