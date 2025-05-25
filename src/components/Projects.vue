@@ -53,7 +53,7 @@ const projects = ref<Project[]>([
         id: 1,
         title: "E-commerce Platform",
         description: "A modern e-commerce solution with cart functionality, payment processing, and user authentication.",
-        image: "/images/project1.jpg", 
+        image: "projects/test1.png", 
         technologies: ["Vue.js", "Node.js", "MongoDB", "Stripe"],
         link: "https://example.com/project1"
     },
@@ -61,7 +61,7 @@ const projects = ref<Project[]>([
         id: 2,
         title: "Task Management App",
         description: "A productivity application for organizing tasks with drag-and-drop functionality and team collaboration.",
-        image: "/images/project2.jpg", 
+        image: "projects/test2.png", 
         technologies: ["React", "Firebase", "Tailwind CSS", "Redux"],
         link: "https://example.com/project2"
     },
@@ -69,7 +69,7 @@ const projects = ref<Project[]>([
         id: 3,
         title: "Real-time Chat Application",
         description: "A messaging platform with real-time communication, user presence, and file sharing capabilities.",
-        image: "/images/project3.jpg", 
+        image: "projects/test3.png", 
         technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
         link: "https://example.com/project3"
     }

@@ -37,7 +37,7 @@
                     </Button>
 
                     <Button variant="outline" asChild>
-                        <a href="#about">
+                        <a href="/about-me">
                         <User class="mr-2 h-4 w-4" />
                         About Me
                         </a>

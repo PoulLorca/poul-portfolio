@@ -3,11 +3,8 @@ import '@/styles/global.css';
 // Component Imports
 import Layout from '@/layouts/main.astro';
 import Navbar from '@/components/Navbar.vue';
-import About from '@/components/About.vue';
-import Stack from '@/components/Stack.vue';
-import Contact from '@/components/Contact.vue';
 import Footer from '@/components/Footer.vue';
-import Experience from '@/components/Experience.vue';
+import Home from '@/components/Blog/Home.vue';
 
 
 const currentPathFromAstro = Astro.url.pathname;
@@ -15,9 +12,7 @@ const currentPathFromAstro = Astro.url.pathname;
 
 <Layout title="Poul's Portfolio">
 	<Navbar client:load currentPath={currentPathFromAstro} />
-    <About />
-    <Experience />
-    <Stack />
-    <Contact />    
+    <Home />
     <Footer />
 </Layout>
+

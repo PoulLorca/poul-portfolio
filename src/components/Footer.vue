@@ -9,8 +9,8 @@
                 </a>
             </div>
 
-            <div class="flex items-center justify-center space-x-2 text-slate-600 dark:text-slate-300">
-                <Code2 class="w-5 h-5" />
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-2 text-slate-600 dark:text-slate-300 text-center">
+                <Code2 class="w-6 h-6 md:w-5 md:h-5 flex-shrink-0" />
                 <span>Developed by Poul Lorca, with Vue + Astro</span>
             </div>
 

@@ -39,7 +39,7 @@
           <Button variant="ghost" asChild>
             <a
               class="transition-all duration-200 hover:text-primary hover:scale-110"
-              :href="isHomePage ? '/about-me' : '/lbrowser-site/about-me'"
+              href="/about-me"
             >
               About Me
             </a>
@@ -47,7 +47,7 @@
           <Button variant="ghost" asChild>
             <a
               class="transition-all duration-200 hover:text-primary hover:scale-110"
-              :href="isHomePage ? '#faq' : '/lbrowser-site/#faq'"
+              href="/blog"
             >
               Blog
             </a>
