@@ -2,10 +2,8 @@
   <section class="container mx-auto max-w-8xl py-12 px-4" id="home">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">        
 
-        <Card class="col-span-1 md:row-span-2 order-5 md:order-none bg-card hover:shadow-lg transition-all h-full group relative overflow-hidden">
-          <!-- Layout para pantallas pequeñas (móvil) -->
-          <div class="block md:hidden">
-            <!-- Imagen simple arriba -->
+        <Card class="col-span-1 md:row-span-2 order-5 md:order-none bg-card hover:shadow-lg transition-all h-full group relative overflow-hidden">          
+          <div class="block md:hidden">            
             <div v-if="latestBlog" class="w-full h-48 overflow-hidden mt-0">
               <img 
                 :src="latestBlog.image" 
@@ -13,10 +11,8 @@
                 class="w-full h-full object-cover object-center"
               />
             </div>
-            
-            <!-- Contenido en orden apilado -->
-            <div class="p-4">
-              <!-- Tech stack badges -->
+                        
+            <div class="p-4">              
               <div class="flex flex-wrap gap-2 mb-3">
                 <Badge 
                   v-for="tech in latestBlog.techStack" 
@@ -26,23 +22,19 @@
                   {{ tech }}
                 </Badge>
               </div>
-              
-              <!-- Fecha -->
+                            
               <div class="text-sm font-medium mb-3 text-slate-600 dark:text-slate-300">
                 {{ latestBlog.date }}
               </div>
-              
-              <!-- Título -->
+                            
               <h3 class="text-xl font-bold mb-4">{{ latestBlog.title }}</h3>
-              
-              <!-- Read more link -->
+                            
               <div class="mb-4">
                 <a :href="latestBlog.link" class="inline-flex items-center hover:text-primary font-medium transition-colors">
                   Read more <ArrowRight class="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
-              
-              <!-- Tags al final -->
+                            
               <div class="flex flex-wrap gap-2">
                 <Badge 
                   v-for="tag in latestBlog.tags" 
@@ -55,8 +47,7 @@
               </div>
             </div>
           </div>
-          
-          <!-- Layout actual para pantallas medianas y grandes (mantener el diseño overlay) -->
+                    
           <CardContent class="relative h-full p-0 hidden md:block">                        
             <div v-if="latestBlog" class="absolute inset-0 w-full h-full overflow-hidden">              
               <img 
