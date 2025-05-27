@@ -12,7 +12,7 @@ const currentPathFromAstro = Astro.url.pathname;
 
 <Layout title="Poul's Portfolio">
 	<Navbar client:load currentPath={currentPathFromAstro} />        
-    <AllPosts />
+    <AllPosts client:load/>
     <Footer />
 </Layout>
 

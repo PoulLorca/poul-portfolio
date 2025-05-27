@@ -1,0 +1,55 @@
+---
+import '@/styles/global.css';
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import FilteredPosts from '@/components/Blog/FilteredPosts.vue';
+
+export async function getStaticPaths() {
+  const postModules = Object.values(import.meta.glob('@/pages/posts/*.md', { eager: true }));
+
+  const allTags = postModules
+    .map(post => {
+      const { frontmatter } = post as any;
+      return frontmatter?.tags || [];
+    })
+    .flat();
+
+  const uniqueTags = [...new Set(allTags)];
+
+  return uniqueTags.map(tag => ({
+    params: { tag: tag.toLowerCase().replace(/\s+/g, '-') },
+    props: { tag }
+  }));
+}
+
+const { tag } = Astro.props;
+const currentPath = Astro.url.pathname;
+const postModules = Object.values(import.meta.glob('@/pages/posts/*.md', { eager: true }));
+
+const filteredPosts = postModules
+  .map(post => {
+    const { frontmatter } = post as any;
+    return {
+      title: frontmatter?.title || 'Untitled Post',
+      date: frontmatter?.date || new Date().toISOString(),
+      image: frontmatter?.image || '/blogs/default.jpg',
+      link: frontmatter?.link || '#',
+      techStack: frontmatter?.techStack || [],
+      tags: frontmatter?.tags || []
+    };
+  })
+  .filter(post => post.tags.includes(tag))
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+---
+
+<Layout title={`Posts tagged with "${tag}"`}>
+  <Navbar client:load currentPath={currentPath} />
+  <FilteredPosts 
+    client:load 
+    posts={filteredPosts} 
+    filterType="tag" 
+    filterValue={tag} 
+  />
+  <Footer />
+</Layout>

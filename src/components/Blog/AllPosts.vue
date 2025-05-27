@@ -112,7 +112,7 @@
                 v-for="tech in uniqueTechnologies"
                 :key="tech.name"
                 :class="getTechBadgeClasses(tech.count)"
-                class="cursor-pointer hover:scale-105 transition-transform duration-200"
+                class="cursor-pointer hover:scale-105 transition-transform duration-200"                
                 @click="filterByTech(tech.name)"
               >
                 {{ tech.name }}
@@ -219,18 +219,18 @@ const getTechBadgeClasses = (count: number) => {
 };
 
 const filterByTag = (tagName: string) => {
-  console.log(`Filter by tag: ${tagName}`);
-  // Aquí puedes implementar la lógica de filtrado
+  const slug = tagName.toLowerCase().replace(/\s+/g, '-');
+  window.location.href = `/blog/tags/${slug}`;
 };
 
 const filterByTech = (techName: string) => {
-  console.log(`Filter by technology: ${techName}`);
-  // Aquí puedes implementar la lógica de filtrado
+  console.log(`Filtering by technology: ${techName}`);
+  const slug = techName.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '');
+  window.location.href = `/blog/techs/${slug}`;
 };
 
 </script>
 <style scoped>
-/* Estilos personalizados para el scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
   width: 6px;
 }
