@@ -4,7 +4,7 @@ import '@/styles/global.css';
 import Layout from '@/layouts/main.astro';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-import Posts from '@/components/Blog/Posts.vue';
+import AllPosts from '@/components/Blog/AllPosts.vue';
 
 
 const currentPathFromAstro = Astro.url.pathname;
@@ -12,7 +12,7 @@ const currentPathFromAstro = Astro.url.pathname;
 
 <Layout title="Poul's Portfolio">
 	<Navbar client:load currentPath={currentPathFromAstro} />        
-    <Posts />
+    <AllPosts />
     <Footer />
 </Layout>
 
