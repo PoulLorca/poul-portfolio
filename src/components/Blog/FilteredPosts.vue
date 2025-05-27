@@ -12,7 +12,7 @@
                 href="/blog/posts"
                 class="mt-4 text-primary hover:underline flex items-center gap-1"
             >
-                <ArrowLwft class="w-4 h-4" />
+                <ArrowLeft class="w-4 h-4" />
                 Back to all posts
             </a>
         </div>
