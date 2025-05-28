@@ -39,25 +39,25 @@ import { Briefcase } from 'lucide-vue-next';
 
 
 const experience = [
-    {
-    role: "Senior Full Stack Developer",
-    company: "Tech Innovations Inc",
-    period: "2021-Present",
-    description: "Lead development of enterprise web applications using modern technologies. Collaborate with cross-functional teams to deliver high-quality solutions.",
+  {
+    role: "Freelance Software Developer",
+    company: "Various Clients",
+    period: "2023 – Present (Part-Time)",
+    description: "Helped clients bring their ideas to life by building complete web applications. Focused on making sure projects were delivered on time and just as requested, even making older systems run much faster.",
   },
   {
-    role: "Software Engineer",
-    company: "Digital Solutions",
-    period: "2018-2021",
-    description: "Developed and maintained full-stack web applications. Implemented new features and improved existing functionality.",
+    role: "Head of Data and Financial Reporting (Breeders Division)",
+    company: "Don Pollo",
+    period: "2020 – Present",
+    description: "Transformed how financial data was handled, speeding up reports from weeks to just a few days. Created a central system to bring together information from many production sites, and helped colleagues become more comfortable using data tools.",
   },
   {
-    role: "Junior Developer",
-    company: "Web Experts Agency",
-    period: "2016-2018",
-    description: "Created responsive websites and web applications for clients across various industries.",
-  }
-]
+    role: "Data Analyst & Reporting Specialist",
+    company: "Don Pollo",
+    period: "2013 – 2020",
+    description: "Improved how accurately we could predict production by a significant margin. Automated many daily tasks, drastically cutting down on manual errors, and developed a model to better forecast egg and hatch outcomes.",
+  },
+];
 </script>
 
 <style scoped>

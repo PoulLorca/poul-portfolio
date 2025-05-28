@@ -30,7 +30,7 @@
 
                 <div class="flex gap-4 mt-2">
                     <Button asChild class="text-foreground">
-                        <a href="mailto:tu-email@ejemplo.com">
+                        <a href="mailto:poullorca@proton.me">
                         <Mail class="mr-2 h-4 w-4" />
                         Contact Me
                         </a>

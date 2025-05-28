@@ -163,15 +163,17 @@
             </CardTitle>            
           </CardHeader>
             <CardContent class="flex flex-wrap gap-2">
-                <Toggle
-                v-for="tech in techs"
+              <button
+                v-for="tech in topTechs"
                 :key="tech.name"
                 :aria-label="tech.name"             
-                class="border-2 border-primary rounded-lg p-2 mb-2 hover:bg-primary hover:text-white transition-all duration-200 cursor-pointer"
-                >
-                    <component :is="tech.icon" class=" h-4 w-4" />
-                    {{ tech.name }}                
-                </Toggle>
+                class="border-2 border-primary rounded-lg p-2 mb-2 hover:bg-primary hover:text-white transition-all duration-200 cursor-pointer flex items-center gap-2"
+                @click="goToTech(tech.name)"
+              >
+                <component :is="getTechIcon(tech.name)" class="h-4 w-4" />
+                {{ tech.name }}
+                <span class="text-xs opacity-75">({{ tech.count }})</span>
+              </button>
             </CardContent>
         </Card>
 
@@ -211,44 +213,49 @@ const postModules = Object.values(import.meta.glob('@/pages/posts/*.md', { eager
 const extractedPosts = ref<any[]>([]);
 
 
-const techs = [
-    { name: 'HTML5', icon: FileCode },
-    //{ name: 'Java', icon: FileCode },
-    //{ name: 'C#', icon: FileCode },
-    //{ name: 'TypeScript', icon: FileCode },    
-    //{ name: 'Vue.js', icon: Hammer },
-    //{ name: 'Nuxt', icon: Hammer },
-    { name: 'Astro', icon: Hammer },
-    { name: 'JavaScript', icon: FileCode },
-    //{ name: 'Spring', icon: Hammer },
-    //{ name: '.Net', icon: Hammer }, 
-    { name: 'Tailwind CSS', icon: Heading1 },
-    { name: 'Markdown', icon: Heading1 },
-    { name: 'CSS3', icon: Heading1 },
-    //{ name: 'JavaFx', icon: Leaf },
-    //{ name: 'Avalonia UI', icon: Leaf },
-    //{ name: 'Qt', icon: Leaf },
-    //{ name: 'Electron', icon: Leaf },
-    //{ name: 'Git', icon: ChartNetwork },
-    //{ name: 'GitHub', icon: ChartNetwork },
-    //{ name: 'Docker', icon: ChartNetwork },    
-    //{ name: 'Postman', icon: ChartNetwork },    
-    //{ name: 'Figma', icon: DraftingCompass },
-    //{ name: 'Gimp', icon: DraftingCompass },
-    //{ name: 'Linux', icon: AppWindow },
-    //{ name: 'Windows', icon: AppWindow },
-    //{ name: 'Supabase', icon: Database },
-    //{ name: 'MySQL', icon: Database },
-    //{ name: 'PostgreSQL', icon: Database },
-    //{ name: 'Oracle', icon: Database },
-    //{ name: 'SQLite', icon: Database },    
-    //{ name: 'Firebase', icon: Database },    
-    //{ name: 'Azure', icon: Cloud },
-    //{ name: 'Google Cloud', icon: Cloud },
-    //{ name: 'Vercel', icon: Cloud },
-    //{ name: 'Netlify', icon: Cloud },  
+const techIconMap: Record<string, any> = {
+  'HTML5': FileCode,
+  'JavaScript': FileCode,
+  'TypeScript': FileCode,
+  'Java': FileCode,
+  'C#': FileCode,
+  'Python': FileCode,
+  'Vue.js': Hammer,
+  'Nuxt': Hammer,
+  'Astro': Hammer,
+  'React': Hammer,
+  'Spring': Hammer,
+  '.Net': Hammer,
+  'Tailwind CSS': Heading1,
+  'Markdown': Heading1,
+  'CSS3': Heading1,
+  'JavaFx': Leaf,
+  'Avalonia UI': Leaf,
+  'Qt': Leaf,
+  'Electron': Leaf,
+  'Git': ChartNetwork,
+  'GitHub': ChartNetwork,
+  'Docker': ChartNetwork,
+  'Postman': ChartNetwork,
+  'Figma': DraftingCompass,
+  'Gimp': DraftingCompass,
+  'Linux': AppWindow,
+  'Windows': AppWindow,
+  'Supabase': Database,
+  'MySQL': Database,
+  'PostgreSQL': Database,
+  'Oracle': Database,
+  'SQLite': Database,
+  'Firebase': Database,
+  'Azure': Cloud,
+  'Google Cloud': Cloud,
+  'Vercel': Cloud,
+  'Netlify': Cloud,
+};
 
-];
+const getTechIcon = (techName: string) => {
+  return techIconMap[techName] || FileCode; 
+};
 
 try {
   postModules.forEach(post => {
@@ -268,6 +275,25 @@ try {
   console.error('Error processing posts:', error);
 }
 
+const uniqueTechnologies = computed(() => {
+  const allTechs = extractedPosts.value
+    .map(post => post.techStack)
+    .flat();
+
+  const techCounts = allTechs.reduce((acc: Record<string, number>, tech: string) => {
+    acc[tech] = (acc[tech] || 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.entries(techCounts)
+    .map(([name, count]) => ({ name, count: count as number }))
+    .sort((a, b) => b.count - a.count);
+});
+
+const topTechs = computed(() => {
+  return uniqueTechnologies.value.slice(0, 6);
+});
+
 const blogs = computed(() => {
   if (extractedPosts.value.length > 0) {
     return extractedPosts.value;
@@ -279,6 +305,12 @@ const latestBlog = computed(() => {
   if (!blogs.value || blogs.value.length === 0) return null;
   return blogs.value.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 });
+
+const goToTech = (techName: string) => {
+  console.log(`Navigating to technology: ${techName}`);
+  const slug = techName.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '');
+  window.location.href = `/blog/techs/${slug}`;
+};
 </script>
 
 <style scoped>

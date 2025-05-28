@@ -57,7 +57,7 @@ const getBadgeClasses = (count: number) => {
 }
 
 const handleTagClick = (tagName: string) => {
-    console.log(`Tag clicked: ${tagName}`);
-    // Implement navigation or filtering logic here
+    const slug = tagName.toLowerCase().replace(/\s+/g, '-');
+    window.location.href = `/blog/tags/${slug}`;
 }
 </script>

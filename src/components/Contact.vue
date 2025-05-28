@@ -16,7 +16,7 @@
                     size="lg"
                     class="mt-6 md:mt-0 bg-white dark:bg-background/95 text-primary dark:text-blue-600 text-lg font-semibold shadow-md hover:bg-white/90 dark:hover:bg-foreground hover:shadow-lg transition-all duration-300"
                 >
-                    <a href="mailto:your.email@example.com">
+                    <a href="mailto:poullorca@proton.me">
                         <Send class="mr-2 h-5 w-5" />
                         Contact Me
                     </a>
