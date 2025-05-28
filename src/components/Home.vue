@@ -21,11 +21,11 @@
                 <h2 class="text-3xl font-bold mb-2">Poul Lorca</h2>
 
                 <p class="font-semibold text-lg mb-4 text-muted-foreground">
-                Full Stack Developer | UI/UX Designer | Tech Enthusiast
+                Sofware Engineer | Data Analyst | Full Stack Developer
                 </p>
 
                 <p class="mb-6">
-                Passionate about creating intuitive digital experiences that solve real-world problems. Specialized in modern web technologies and responsive design.
+                Solutions-driven software engineer focused on data analysis and full-stack development, proficient in Java, C#, TypeScript, modern web technologies (Nuxt, Astro), and database management (MySQL, PostgreSQL, Oracle).
                 </p>
 
                 <div class="flex gap-4 mt-2">
@@ -47,26 +47,30 @@
             </div>
         </Card>
 
-        <Card class="col-span-1 md:row-span-2 order-5 md:order-none bg-card hover:shadow-lg transition-all h-full group">
-            <CardHeader>
-                <CardTitle class="flex items-center">
-                    <CodeXml class="mr-2 h-10 w-10" />
-                    <span class="text-4xl font-bold">Projects</span>
-                </CardTitle>          
-            </CardHeader>
 
-            <CardContent class="overflow-hidden">
-                <p>I love turning ideas into real projects. Here I show you some of the developmens I've worked on, applying technolohy, design, and lots of creativity. Check them out!</p>
-            
-                <div class="mt-4 md:mt-10 overflow-hidden rounded-lg shadow-md relative h-60 md:h-96">
-                    <img 
-                    src="/projects.png" 
-                    alt="Projects" 
-                    class="absolute w-[115%] h-[115%] object-cover object-center transform origin-center transition-all duration-500 ease-in-out group-hover:scale-120 group-hover:rotate-2"
-                    />
-                </div>
-            </CardContent>
-        </Card>
+        <a href="#projects" class="col-span-1 md:row-span-2 order-5 md:order-none block h-full">
+          <Card class="bg-card hover:shadow-lg transition-all h-full group cursor-pointer">
+              <CardHeader>
+                  <CardTitle class="flex items-center">
+                      <CodeXml class="mr-2 h-10 w-10" />
+                      <span class="text-4xl font-bold">Projects</span>
+                  </CardTitle>
+              </CardHeader>
+              <CardContent class="overflow-hidden">
+                  <p>
+                    These are some of my public works that I've particularly enjoyed creating. I hope you find them interesting to explore.
+                  </p>
+          
+                  <div class="mt-4 md:mt-10 overflow-hidden rounded-lg shadow-md relative h-60 md:h-96">
+                      <img
+                      src="/projects.png"
+                      alt="Projects"
+                      class="absolute w-[115%] h-[115%] object-cover object-center transform origin-center transition-all duration-500 ease-in-out group-hover:scale-120 group-hover:rotate-2"
+                      />
+                  </div>
+              </CardContent>
+          </Card>
+        </a>
 
       <Card class="col-span-1 order-2 md:order-none bg-card hover:shadow-lg transition-all">
         <CardHeader>
@@ -129,7 +133,7 @@
                 Music
               </Badge>              
               <Badge varaint="outline" class="bg-primary/10 text-foreground border-primary px-4 py-2 text-sm">
-                Crafts
+                Cars
               </Badge>
             </div>
           </CardContent>
