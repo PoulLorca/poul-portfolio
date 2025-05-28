@@ -51,26 +51,26 @@ interface Project {
 const projects = ref<Project[]>([
     {
         id: 1,
-        title: "E-commerce Platform",
-        description: "A modern e-commerce solution with cart functionality, payment processing, and user authentication.",
-        image: "projects/test1.png", 
-        technologies: ["Vue.js", "Node.js", "MongoDB", "Stripe"],
-        link: "https://example.com/project1"
+        title: "LBrowser",
+        description: "LBrowser is a lightweight, privacy-focused, open-source web browser that enables easy access to alternative networks like Tor, I2P, and Zeronet via Docker, without tracking or selling your data.",
+        image: "projects/submarine.png", 
+        technologies: ["Java", "Qt", "Docker"],
+        link: "https://poullorca.github.io/lbrowser-site/"
     },
     {
         id: 2,
-        title: "Task Management App",
-        description: "A productivity application for organizing tasks with drag-and-drop functionality and team collaboration.",
-        image: "projects/test2.png", 
-        technologies: ["React", "Firebase", "Tailwind CSS", "Redux"],
-        link: "https://example.com/project2"
+        title: "Hyphanet Docker",
+        description: "Hyphanet is a decentralized, peer-to-peer network that allows users to create and share content without relying on traditional internet infrastructure. This Docker image simplifies the deployment of Hyphanet nodes.",
+        image: "projects/hyphanet.png", 
+        technologies: ["Linux", "Docker"],
+        link: "https://hub.docker.com/r/poullorca/hyphanet-node"
     },
     {
         id: 3,
-        title: "Real-time Chat Application",
-        description: "A messaging platform with real-time communication, user presence, and file sharing capabilities.",
-        image: "projects/test3.png", 
-        technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
+        title: "This Website",
+        description: "A personal portfolio website built with Vue.js + Astro and Tailwind CSS, showcasing my projects, blog posts, and professional experience.",
+        image: "projects/paragraph.png", 
+        technologies: ["Vue.js", "Astro", "Tailwind CSS"],
         link: "https://example.com/project3"
     }
 ]);
