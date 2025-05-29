@@ -24,7 +24,7 @@ This portfolio is inspired by the beautiful design of [NeonMint](https://neonmin
 - **UI Components**: [shadcn/ui](https://ui.shadcn.com/) for Vue
 - **Icons**: [Lucide Vue Next](https://lucide.dev/)
 - **Typography**: Roboto Mono Variable
-- **Deployment**: [Netlify](https://netlify.com/)
+- **Deployment**: [Vercel](https://vercel.com/)
 
 ## 📁 Project Structure
 
@@ -139,7 +139,7 @@ The portfolio is fully responsive with breakpoints:
 
 ## 🌐 Deployment
 
-This project is configured for deployment on Netlify. Simply connect your GitHub repository to Netlify for automatic deployments.
+This project is configured for deployment on Vercel. Simply connect your GitHub repository to Vercel for automatic deployments.
 
 ## 📄 License
 
