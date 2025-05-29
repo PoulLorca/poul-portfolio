@@ -7,8 +7,9 @@ import vue from '@astrojs/vue';
 // https://astro.build/config
 export default defineConfig({
   vite: {
-      plugins: [tailwindcss()]
+      plugins: [tailwindcss()]      
 	},
 
-  integrations: [vue()]
+  integrations: [vue()],
+  site: 'https://poullorca.dev',
 });
