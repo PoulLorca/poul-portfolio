@@ -14,7 +14,7 @@ import {
 const { frontmatter } = Astro.props;
 const siteUrl = Astro.site;
 const postUrl = `${siteUrl}${frontmatter.link}`;
-const imageUrl = frontmatter.image ? `${siteUrl}${frontmatter.image}` : `${siteUrl}/paragraph.svg`;
+const imageUrl = frontmatter.image ? `${siteUrl}${frontmatter.image}` : `${siteUrl}/projects/paragraph.png`;
 
 const SHARE_BUTTONS = [TwitterShareButton, FacebookShareButton, LinkedInShareButton, RedditShareButton, WhatsAppShareButton];
 ---
@@ -36,7 +36,7 @@ const SHARE_BUTTONS = [TwitterShareButton, FacebookShareButton, LinkedInShareBut
         <meta property="og:type" content="article" />
         <meta property="og:url" content={postUrl} />
         <meta property="og:title" content={frontmatter.title} />
-        <meta property="og:description" content={`Por Poul Lorca - ${frontmatter.tags?.join(', ')}`} />
+        <meta property="og:description" content={`By Poul Lorca`} />
         <meta property="og:image" content={imageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -45,8 +45,9 @@ const SHARE_BUTTONS = [TwitterShareButton, FacebookShareButton, LinkedInShareBut
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={postUrl} />
         <meta property="twitter:title" content={frontmatter.title} />
-        <meta property="twitter:description" content={`Por Poul Lorca - ${frontmatter.tags?.join(', ')}`} />
+        <meta property="twitter:description" content={`By Poul Lorca`} />
         <meta property="twitter:image" content={imageUrl} />
+        <meta property="twitter:creator" content="@PoulLorca" />
 
         <!-- Additional Meta Tags -->
         <meta name="robots" content="index, follow" />
@@ -81,8 +82,7 @@ const SHARE_BUTTONS = [TwitterShareButton, FacebookShareButton, LinkedInShareBut
                     <SocialShare
                         buttons={SHARE_BUTTONS}
                         description={`${frontmatter.title} - By Poul Lorca`}
-                        title={frontmatter.title}
-                        via="PoulLorca"
+                        title={frontmatter.title}                        
                     >
                         <slot name="astro-social-share-css">
                             <style is:global>
