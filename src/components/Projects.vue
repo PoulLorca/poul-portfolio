@@ -71,7 +71,7 @@ const projects = ref<Project[]>([
         description: "A personal portfolio website built with Vue.js + Astro and Tailwind CSS, showcasing my projects, blog posts, and professional experience.",
         image: "projects/paragraph.png", 
         technologies: ["Vue.js", "Astro", "Tailwind CSS"],
-        link: "https://example.com/project3"
+        link: "https://github.com/PoulLorca/poul-portfolio"
     }
 ]);
 </script>
