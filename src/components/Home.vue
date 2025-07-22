@@ -42,6 +42,13 @@
                         About Me
                         </a>
                     </Button>
+
+                    <Button variant="destructive" asChild>
+                        <a href="https://www.fiverr.com/poul_lorca">
+                        <Flame class="mr-2 h-4 w-4" />
+                        Fiverr
+                        </a>
+                    </Button>
                 </div>
             </div>
             </div>
@@ -164,7 +171,8 @@ import {
     ChartNetwork,
     Cloud,
     Github,
-    Coffee
+    Coffee,
+    Flame
  } from "lucide-vue-next"; 
 
 const profileImage = 'profileImage.jpg';
