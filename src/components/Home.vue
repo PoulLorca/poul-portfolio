@@ -28,7 +28,7 @@
                 Solutions-driven software engineer focused on data analysis and full-stack development, proficient in Java, C#, TypeScript, modern web technologies (Nuxt, Astro), and database management (MySQL, PostgreSQL, Oracle).
                 </p>
 
-                <div class="flex gap-4 mt-2">
+                <div class="flex flex-col sm:flex-row gap-4 mt-2">
                     <Button asChild class="text-foreground">
                         <a href="mailto:poullorca@proton.me">
                         <Mail class="mr-2 h-4 w-4" />
