@@ -141,6 +141,8 @@ const enviado = ref(false);
 const listo = ref(false);
 const visibles = ref(0);
 const pausado = ref(false);
+// Reactivo porque el template lo usa para ocultar los controles
+const reducirMovimiento = ref(false);
 
 const trabajando = computed(() => enviado.value && !listo.value);
 
@@ -148,7 +150,6 @@ let vivo = true;
 let token = 0;
 let enPantalla = true;
 let tabVisible = true;
-let reducir = false;
 let io: IntersectionObserver | undefined;
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -241,9 +242,9 @@ const onVis = () => {
 };
 
 onMounted(() => {
-  reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  reducirMovimiento.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (reducir) {
+  if (reducirMovimiento.value) {
     // Conversación completa, estática (trabajo ya terminado)
     enviado.value = true;
     listo.value = true;

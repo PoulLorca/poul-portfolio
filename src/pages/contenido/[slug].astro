@@ -173,7 +173,7 @@ const textoCompartir = `${pieza.data.title} — Poul Lorca`;
         <div class="mb-8 rounded-xl border bg-card p-5" data-pagefind-ignore>
           <h2 class="font-bold mb-3">Capítulos del video</h2>
           <ul class="space-y-2 text-sm">
-            {pieza.data.capitulos.map((c) => (
+            {pieza.data.capitulos.map((c: { tiempo: string; titulo: string }) => (
               <li class="flex gap-3">
                 <span class="text-primary font-mono shrink-0">{c.tiempo}</span>
                 <span>{c.titulo}</span>
