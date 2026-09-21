@@ -1,0 +1,70 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import ContenidoList from '@/components/ContenidoList.vue';
+import { getCollection } from 'astro:content';
+import temasData from '@/data/temas.json';
+
+export async function getStaticPaths() {
+  const slugs = (temasData as { slug: string }[]).map((t) => t.slug);
+  return slugs.map((tema) => ({
+    params: { tema },
+    props: { tema },
+  }));
+}
+
+const { tema } = Astro.props;
+const meta = (temasData as { slug: string; title: string; description: string }[]).find(
+  (t) => t.slug === tema
+);
+const currentPathFromAstro = Astro.url.pathname;
+
+const piezas = (await getCollection('contenido'))
+  .filter((p) => (import.meta.env.DEV || !p.data.draft) && p.data.tema === tema)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .map((p) => ({
+    slug: p.id.replace(/\.md$/, ''),
+    title: p.data.title,
+    description: p.data.description,
+    date: p.data.date.toISOString(),
+    tema: p.data.tema,
+    tipo: p.data.tipo,
+    tags: p.data.tags,
+    herramientas: p.data.herramientas,
+    videoUrl: p.data.videoUrl,
+    image: p.data.image,
+    draft: p.data.draft,
+  }));
+---
+
+<Layout
+  title={`${meta?.title ?? tema} — Poul Lorca`}
+  description={meta?.description ?? `Contenido sobre ${tema}.`}
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main class="container mx-auto max-w-5xl px-4 py-12" data-pagefind-body>
+    <nav class="text-sm mb-6" aria-label="Miga de pan" data-pagefind-ignore>
+      <a href="/" class="hover:text-primary">Inicio</a>
+      <span class="mx-2 text-muted-foreground">/</span>
+      <a href="/temas" class="hover:text-primary">Temas</a>
+      <span class="mx-2 text-muted-foreground">/</span>
+      <span>{meta?.title ?? tema}</span>
+    </nav>
+
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold mb-3">{meta?.title ?? tema}</h1>
+      <p class="text-lg text-muted-foreground text-balance max-w-2xl mx-auto">{meta?.description}</p>
+      <p class="text-sm text-muted-foreground mt-2">
+        {piezas.length} {piezas.length === 1 ? 'pieza' : 'piezas'}
+      </p>
+    </div>
+
+    {piezas.length > 0 ? (
+      <ContenidoList client:load piezas={piezas} inicial={16} paso={16} temaInicial={tema} />
+    ) : (
+      <p class="text-center text-muted-foreground">El primer contenido llega el 3 de noviembre.</p>
+    )}
+  </main>
+  <Footer />
+</Layout>

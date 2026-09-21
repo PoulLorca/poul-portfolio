@@ -1,0 +1,30 @@
+[
+  {
+    "slug": "agentes",
+    "title": "Agentes y automatización",
+    "description": "Qué puede hacer un agente por un negocio, qué no deberías delegarle y cómo montarlo para que funcione 24/7 sin sorpresas.",
+    "short": "Qué delegar a un agente, qué no, y cómo montarlo.",
+    "icon": "Bot"
+  },
+  {
+    "slug": "costos",
+    "title": "Costos de IA",
+    "description": "Cuánto cuesta realmente operar IA: modelos, APIs, servidores y las decisiones que hacen que la cuenta baje o se dispare.",
+    "short": "Cuánto cuesta realmente operar IA y cómo reducirlo.",
+    "icon": "Coins"
+  },
+  {
+    "slug": "arquitectura",
+    "title": "Arquitectura y sistemas",
+    "description": "Del Excel al sistema: cómo diseñar soluciones que sigan funcionando cuando el negocio crece.",
+    "short": "Construir cosas que no se caigan cuando el negocio crece.",
+    "icon": "Network"
+  },
+  {
+    "slug": "herramientas",
+    "title": "Herramientas",
+    "description": "Modelos y herramientas nuevas, probadas con una pregunta en mente: ¿le sirven a un negocio?",
+    "short": "Modelos y herramientas nuevas, evaluadas con ojo de negocio.",
+    "icon": "Wrench"
+  }
+]

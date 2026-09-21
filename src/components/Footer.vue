@@ -1,68 +1,98 @@
 <template>
-    <footer class="w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-6">
-        <div class="container flex flex-col md:flex-row items-center justify-between px-4 gap-6 md:gap-0">
+  <footer
+    class="w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-10"
+    data-pagefind-ignore
+  >
+    <div class="container px-4 mx-auto max-w-5xl">
+      <div class="mb-8">
+        <a href="/" class="flex items-center space-x-2 mb-3">
+          <Pilcrow class="w-6 h-6 text-primary" />
+          <span class="text-xl font-bold text-primary">Poul Lorca</span>
+        </a>
+        <p class="text-sm text-muted-foreground max-w-2xl">
+          Tecnología aplicada a negocios, en español. Por Poul Lorca, ingeniero y
+          administrador de empresas con más de 10 años construyendo software.
+        </p>
+      </div>
 
-            <div class="flex items-center">
-                <a href="/" class="flex items-center space-x-2">
-                    <Pilcrow class="w-6 h-6 text-primary" />
-                    <span class="text-xl font-bold text-primary">Poul L</span>
-                </a>
-            </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <nav aria-label="Contenido">
+          <h3 class="font-bold mb-3 text-sm uppercase tracking-wider">Contenido</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/contenido" class="hover:text-primary transition-colors">Todo el contenido</a></li>
+            <li><a href="/temas" class="hover:text-primary transition-colors">Temas</a></li>
+            <li><a href="/contenido?buscar=1" class="hover:text-primary transition-colors">Buscar</a></li>
+          </ul>
+        </nav>
 
-            <div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-2 text-slate-600 dark:text-slate-300 text-center">
-                <Code2 class="w-6 h-6 md:w-5 md:h-5 flex-shrink-0" />
-                <span>Developed by Poul Lorca, with Vue + Astro</span>
-            </div>
+        <nav aria-label="Temas">
+          <h3 class="font-bold mb-3 text-sm uppercase tracking-wider">Temas</h3>
+          <ul class="space-y-2 text-sm">
+            <li v-for="t in temas" :key="t.slug">
+              <a :href="`/temas/${t.slug}`" class="hover:text-primary transition-colors">
+                {{ t.title }}
+              </a>
+            </li>
+          </ul>
+        </nav>
 
-            <div class="flex items-center space-x-4">
-                <a
-                href="mailto:your.email@example.com"
-                title="Email"
-                class="transition-all duration-200 hover:text-primary hover:scale-110"
-                >
-                <Mail class="w-5 h-5" />
-                </a>
-                <a
-                href="https://twitter.com/yourusername"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Twitter"
-                class="transition-all duration-200 hover:text-primary hover:scale-110"
-                >
-                <Twitter class="w-5 h-5" />
-                </a>
-                <a
-                href="https://github.com/poullorca"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="GitHub"
-                class="transition-all duration-200 hover:text-primary hover:scale-110"
-                >
-                <Github class="w-5 h-5" />
-                </a>
-                <a
-                href="https://linkedin.com/in/poul-lorca-9433a8296"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="LinkedIn"
-                class="transition-all duration-200 hover:text-primary hover:scale-110"
-                >
-                <Linkedin class="w-5 h-5" />
-                </a>
-            </div>
+        <nav aria-label="Redes">
+          <h3 class="font-bold mb-3 text-sm uppercase tracking-wider">Redes</h3>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a :href="site.youtubeUrl" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+                YouTube
+              </a>
+            </li>
+            <li>
+              <a :href="site.xUrl" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+                X
+              </a>
+            </li>
+            <li>
+              <a :href="site.githubUrl" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a :href="site.linkedinUrl" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+                LinkedIn
+              </a>
+            </li>
+          </ul>
+        </nav>
 
-        </div>
-    </footer>
+        <nav aria-label="Contacto">
+          <h3 class="font-bold mb-3 text-sm uppercase tracking-wider">Contacto</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/asesorias" class="hover:text-primary transition-colors">Asesorías</a></li>
+            <li>
+              <a :href="site.fiverrUrl" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+                Fiverr
+              </a>
+            </li>
+            <li>
+              <a :href="`mailto:${site.email}`" class="hover:text-primary transition-colors">
+                Correo
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div
+        class="pt-6 border-t border-border text-sm text-muted-foreground text-center"
+      >
+        <span>© 2026 Poul Lorca · Hecho con Vue + Astro</span>
+      </div>
+    </div>
+  </footer>
 </template>
 
 <script setup lang="ts">
-import { 
-    Pilcrow,
-    Code2,
-    Mail,
-    Twitter,
-    Github,
-    Linkedin
- } from 'lucide-vue-next';
+import { Pilcrow } from 'lucide-vue-next';
+import temasData from '@/data/temas.json';
+import site from '@/data/site.json';
 
+const temas = temasData as { slug: string; title: string }[];
 </script>

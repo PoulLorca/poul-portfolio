@@ -1,0 +1,37 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import TemaCard from '@/components/TemaCard.vue';
+import { getCollection } from 'astro:content';
+import temasData from '@/data/temas.json';
+
+const currentPathFromAstro = Astro.url.pathname;
+const todas = (await getCollection('contenido')).filter((p) => import.meta.env.DEV || !p.data.draft);
+
+const temas = (temasData as { slug: string; title: string; description: string; icon: string }[]).map(
+  (t) => ({
+    ...t,
+    count: todas.filter((p) => p.data.tema === t.slug).length,
+  })
+);
+---
+
+<Layout
+  title="Temas — Poul Lorca"
+  description="Agentes y automatización, costos de IA, arquitectura y sistemas, y herramientas."
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main class="container mx-auto max-w-5xl px-4 py-12" data-pagefind-body>
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold mb-3">Temas</h1>
+      <p class="text-lg text-muted-foreground text-balance">Elige por dónde empezar.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {temas.map((t) => (
+        <TemaCard client:load tema={t} />
+      ))}
+    </div>
+  </main>
+  <Footer />
+</Layout>

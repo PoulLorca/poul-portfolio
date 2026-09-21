@@ -1,25 +1,117 @@
 ---
-import '../styles/global.css';
-// Component Imports
-import Layout from '../layouts/main.astro';
+import Layout from '@/layouts/main.astro';
 import Navbar from '@/components/Navbar.vue';
-import Home from '@/components/Home.vue';
-import Experience from '@/components/Experience.vue';
-import Projects from '@/components/Projects.vue';
-import Contact from '@/components/Contact.vue';
 import Footer from '@/components/Footer.vue';
+import Hero from '@/components/Hero.vue';
+import ContenidoList from '@/components/ContenidoList.vue';
+import TemaCard from '@/components/TemaCard.vue';
+import { getCollection } from 'astro:content';
+import terminal from '@/data/terminal.json';
+import temasData from '@/data/temas.json';
+import site from '@/data/site.json';
 
 const currentPathFromAstro = Astro.url.pathname;
 
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+const todas = (await getCollection('contenido'))
+  .filter((p) => import.meta.env.DEV || !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const paraHero = todas.find((p) => p.data.destacado) ?? todas[0];
+const destacado = paraHero
+  ? {
+      slug: paraHero.id.replace(/\.md$/, ''),
+      title: paraHero.data.title,
+      description: paraHero.data.description,
+      date: paraHero.data.date.toISOString(),
+      videoUrl: paraHero.data.videoUrl,
+      image: paraHero.data.image,
+    }
+  : null;
+
+const recientes = todas.slice(0, 8).map((p) => ({
+  slug: p.id.replace(/\.md$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  date: p.data.date.toISOString(),
+  tema: p.data.tema,
+  tipo: p.data.tipo,
+  tags: p.data.tags,
+  herramientas: p.data.herramientas,
+  videoUrl: p.data.videoUrl,
+  image: p.data.image,
+  draft: p.data.draft,
+}));
+
+const temasConteo = (
+  temasData as { slug: string; title: string; description: string; short: string; icon: string }[]
+).map((t) => ({
+  ...t,
+  description: t.short,
+  count: todas.filter((p) => p.data.tema === t.slug).length,
+}));
 ---
 
-<Layout title="Poul's Portfolio">
-	<Navbar client:load currentPath={currentPathFromAstro} />
-	<Home />
-	<Experience />
-	<Projects />
-	<Contact />
-	<Footer />
+<Layout
+  title="Poul Lorca — IA, automatización y negocios"
+  description="Artículos y videos en español sobre agentes, automatización y el costo real de operar IA en un negocio."
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main data-pagefind-body>
+    <Hero client:load destacado={destacado} escenas={terminal} youtubeUrl={site.youtubeUrl} />
+
+    <section class="container mx-auto max-w-5xl px-4 pb-4">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <h2 class="text-3xl font-bold">Lo último</h2>
+        </div>
+        <a href="/contenido" class="text-primary font-medium hover:underline shrink-0">
+          Ver todo el contenido →
+        </a>
+      </div>
+      {
+        recientes.length > 0 ? (
+          <ContenidoList client:load piezas={recientes} inicial={8} paso={8} />
+        ) : (
+          <p class="text-muted-foreground">El primer contenido llega el 3 de noviembre.</p>
+        )
+      }
+    </section>
+
+    <section class="container mx-auto max-w-5xl px-4 py-10">
+      <div class="mb-6">
+        <h2 class="text-3xl font-bold">Temas</h2>
+        <p class="text-muted-foreground mt-1">
+          Cuatro frentes, un mismo objetivo: tecnología que funcione para un negocio.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {temasConteo.map((t) => (
+          <TemaCard client:load tema={t} />
+        ))}
+      </div>
+    </section>
+
+    <section class="container mx-auto max-w-5xl px-4 pb-14">
+      <div
+        class="rounded-xl border bg-card p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-6 shadow-sm"
+      >
+        <div class="flex-1">
+          <h2 class="text-2xl md:text-3xl font-bold mb-2">
+            ¿Tu negocio necesita automatizar algo concreto?
+          </h2>
+          <p class="text-muted-foreground">
+            Si tienes un proceso que se come horas o una idea con IA y no sabes cuánto
+            costaría operarla, conversemos.
+          </p>
+        </div>
+        <a
+          href="/asesorias"
+          class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-all shrink-0"
+        >
+          Ver asesorías →
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
 </Layout>

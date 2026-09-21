@@ -1,0 +1,19 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import Asesorias from '@/components/Asesorias.vue';
+
+const currentPathFromAstro = Astro.url.pathname;
+---
+
+<Layout
+  title="Asesorías — Poul Lorca"
+  description="Automatización, agentes de IA y costos de operación para tu negocio."
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main data-pagefind-body>
+    <Asesorias />
+  </main>
+  <Footer />
+</Layout>

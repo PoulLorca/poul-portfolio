@@ -1,0 +1,74 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import ContenidoList from '@/components/ContenidoList.vue';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const todas = (await getCollection('contenido'))
+    .filter((p) => !p.data.draft)
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  const POR_PAGINA = 16;
+  const totalPaginas = Math.max(1, Math.ceil(todas.length / POR_PAGINA));
+
+  // La página 1 vive en /contenido; aquí generamos /contenido/pagina/2, /contenido/pagina/3…
+  return Array.from({ length: totalPaginas - 1 }, (_, i) => {
+    const page = i + 2;
+    const piezas = todas
+      .slice((page - 1) * POR_PAGINA, page * POR_PAGINA)
+      .map((p) => ({
+        slug: p.id.replace(/\.md$/, ''),
+        title: p.data.title,
+        description: p.data.description,
+        date: p.data.date.toISOString(),
+        tema: p.data.tema,
+        tipo: p.data.tipo,
+        tags: p.data.tags,
+        herramientas: p.data.herramientas,
+        videoUrl: p.data.videoUrl,
+        image: p.data.image,
+        draft: p.data.draft,
+      }));
+    return {
+      params: { page: String(page) },
+      props: { page, totalPaginas, piezas },
+    };
+  });
+}
+
+const { page, totalPaginas, piezas } = Astro.props;
+const currentPathFromAstro = Astro.url.pathname;
+---
+
+<Layout
+  title={`Contenido — Página ${page} — Poul Lorca`}
+  description="Todos los artículos y videos sobre agentes, automatización, costos de IA y arquitectura para negocios."
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main class="container mx-auto max-w-5xl px-4 py-12" data-pagefind-body>
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold mb-3">Contenido — página {page}</h1>
+      <p class="text-muted-foreground">Archivo paginado. También puedes filtrar en cliente.</p>
+    </div>
+
+    <ContenidoList client:load piezas={piezas} inicial={16} paso={16} />
+
+    <nav class="flex items-center justify-center gap-4 mt-10" aria-label="Paginación">
+      <a
+        href={page === 2 ? '/contenido' : `/contenido/pagina/${page - 1}`}
+        class="text-primary font-medium hover:underline"
+      >
+        ← Anterior
+      </a>
+      <span class="text-muted-foreground text-sm">Página {page} de {totalPaginas}</span>
+      {page < totalPaginas && (
+        <a href={`/contenido/pagina/${page + 1}`} class="text-primary font-medium hover:underline">
+          Siguiente →
+        </a>
+      )}
+    </nav>
+  </main>
+  <Footer />
+</Layout>

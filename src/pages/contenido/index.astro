@@ -1,0 +1,73 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import ContenidoList from '@/components/ContenidoList.vue';
+import { getCollection } from 'astro:content';
+
+const currentPathFromAstro = Astro.url.pathname;
+
+const todas = (await getCollection('contenido'))
+  .filter((p) => import.meta.env.DEV || !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const piezas = todas.map((p) => ({
+  slug: p.id.replace(/\.md$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  date: p.data.date.toISOString(),
+  tema: p.data.tema,
+  tipo: p.data.tipo,
+  tags: p.data.tags,
+  herramientas: p.data.herramientas,
+  videoUrl: p.data.videoUrl,
+  image: p.data.image,
+  draft: p.data.draft,
+}));
+
+// SSR inicial desde query (?q=&tema=&tipo=&tag=&herramienta=); el componente hidrata y refina en cliente.
+const q = Astro.url.searchParams.get('q') ?? '';
+const temaSel = Astro.url.searchParams.get('tema') ?? '';
+const tipoSel = Astro.url.searchParams.get('tipo') ?? '';
+const tagSel = Astro.url.searchParams.get('tag') ?? '';
+const herramientaSel = Astro.url.searchParams.get('herramienta') ?? '';
+---
+
+<Layout
+  title="Contenido — Poul Lorca"
+  description="Todos los artículos y videos sobre agentes, automatización, costos de IA y arquitectura para negocios."
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main class="container mx-auto max-w-5xl px-4 py-12" data-pagefind-body>
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold mb-3">Contenido</h1>
+      <p class="text-lg text-muted-foreground text-balance">
+        Todo lo publicado, lo más nuevo primero. Busca por tema, tipo o herramienta.
+      </p>
+    </div>
+
+    <ContenidoList
+      client:load
+      piezas={piezas}
+      inicial={16}
+      paso={16}
+      queryInicial={q}
+      temaInicial={temaSel}
+      tipoInicial={tipoSel}
+      tagInicial={tagSel}
+      herramientaInicial={herramientaSel}
+    />
+
+    {
+      piezas.length > 16 && (
+        <nav class="flex items-center justify-center gap-4 mt-10" aria-label="Paginación">
+          <span class="text-muted-foreground text-sm">Página 1</span>
+          <a href="/contenido/pagina/2" class="text-primary font-medium hover:underline">
+            Ir a la página 2 →
+          </a>
+        </nav>
+      )
+    }
+  </main>
+  <Footer />
+</Layout>

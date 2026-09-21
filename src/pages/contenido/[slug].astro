@@ -1,0 +1,262 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { getCollection, render } from 'astro:content';
+import temasData from '@/data/temas.json';
+import site from '@/data/site.json';
+
+export async function getStaticPaths() {
+  const piezas = await getCollection('contenido', ({ data }) => !data.draft);
+  return piezas.map((p) => ({
+    params: { slug: p.id.replace(/\.md$/, '') },
+    props: { slug: p.id.replace(/\.md$/, '') },
+  }));
+}
+
+const { slug } = Astro.params;
+const pieza = (await getCollection('contenido')).find((p) => p.id.replace(/\.md$/, '') === slug);
+
+if (!pieza) {
+  return Astro.redirect('/contenido', 404);
+}
+
+const { Content } = await render(pieza);
+const currentPathFromAstro = Astro.url.pathname;
+const fecha = pieza.data.date.toLocaleDateString('es', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const canonical = new URL(`/contenido/${slug}`, Astro.site).href;
+const temaTitulo =
+  (temasData as { slug: string; title: string }[]).find((t) => t.slug === pieza.data.tema)?.title ??
+  pieza.data.tema;
+
+// Relacionadas: mismo tema primero, luego mismo tipo; excluye la actual; máx 3.
+const todas = (await getCollection('contenido')).filter(
+  (p) => !p.data.draft && p.id.replace(/\.md$/, '') !== slug
+);
+const relacionadas = [...todas]
+  .sort((a, b) => {
+    const aTema = a.data.tema === pieza.data.tema ? 0 : 1;
+    const bTema = b.data.tema === pieza.data.tema ? 0 : 1;
+    if (aTema !== bTema) return aTema - bTema;
+    const aTipo = a.data.tipo === pieza.data.tipo ? 0 : 1;
+    const bTipo = b.data.tipo === pieza.data.tipo ? 0 : 1;
+    if (aTipo !== bTipo) return aTipo - bTipo;
+    return b.data.date.getTime() - a.data.date.getTime();
+  })
+  .slice(0, 3)
+  .map((p) => ({
+    slug: p.id.replace(/\.md$/, ''),
+    title: p.data.title,
+    description: p.data.description,
+    date: p.data.date.toISOString(),
+    tema: p.data.tema,
+    tipo: p.data.tipo,
+    tags: p.data.tags,
+    herramientas: p.data.herramientas,
+    videoUrl: p.data.videoUrl,
+    image: p.data.image,
+  }));
+
+const textoCompartir = `${pieza.data.title} — Poul Lorca`;
+---
+
+<Layout
+  title={`${pieza.data.title} — Poul Lorca`}
+  description={pieza.data.description}
+  image={pieza.data.image ?? '/blogs/default.jpg'}
+  url={canonical}
+  type="article"
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main class="container mx-auto max-w-3xl px-4 py-12">
+    <nav class="text-sm mb-6" aria-label="Miga de pan" data-pagefind-ignore>
+      <a href="/" class="hover:text-primary">Inicio</a>
+      <span class="mx-2 text-muted-foreground">/</span>
+      <a href="/contenido" class="hover:text-primary">Contenido</a>
+      <span class="mx-2 text-muted-foreground">/</span>
+      <a href={`/temas/${pieza.data.tema}`} class="hover:text-primary">{temaTitulo}</a>
+    </nav>
+
+    <article data-pagefind-body>
+      <div class="flex flex-wrap items-center gap-2 mb-4" data-pagefind-ignore>
+        <a href={`/temas/${pieza.data.tema}`}>
+          <Badge class="bg-primary/90">{temaTitulo}</Badge>
+        </a>
+        <a href={`/contenido?tipo=${pieza.data.tipo}`}>
+          <Badge variant="secondary">{pieza.data.tipo}</Badge>
+        </a>
+        {pieza.data.tags.map((tag: string) => (
+          <a href={`/contenido?tag=${encodeURIComponent(tag)}`}>
+            <Badge variant="outline">{tag}</Badge>
+          </a>
+        ))}
+        {pieza.data.herramientas.map((h: string) => (
+          <a href={`/contenido?herramienta=${encodeURIComponent(h)}`}>
+            <Badge variant="outline">{h}</Badge>
+          </a>
+        ))}
+        {pieza.data.videoUrl && <Badge class="bg-black/70 text-white">Video</Badge>}
+      </div>
+
+      <p class="text-sm text-muted-foreground mb-2">
+        <time datetime={pieza.data.date.toISOString()}>{fecha}</time>
+        {' · '}Por Poul Lorca
+      </p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4 text-balance" data-pagefind-weight="10">
+        {pieza.data.title}
+      </h1>
+      <p class="text-lg text-muted-foreground mb-6 text-balance" data-pagefind-ignore>
+        {pieza.data.description}
+      </p>
+
+      {
+        pieza.data.videoUrl && (
+          <div class="mb-8" data-pagefind-ignore>
+            <div class="aspect-video overflow-hidden rounded-xl shadow-md bg-black">
+              <iframe
+                src={pieza.data.videoUrl.replace('watch?v=', 'embed/')}
+                title={`Video: ${pieza.data.title}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+                class="w-full h-full"
+              />
+            </div>
+            <div class="mt-3 flex flex-wrap gap-3">
+              <Button asChild size="sm">
+                <a href={pieza.data.videoUrl} target="_blank" rel="noopener noreferrer">
+                  Ver en YouTube
+                </a>
+              </Button>
+              {pieza.data.repoUrl && (
+                <Button asChild size="sm" variant="outline">
+                  <a href={pieza.data.repoUrl} target="_blank" rel="noopener noreferrer">
+                    Ver repositorio
+                  </a>
+                </Button>
+              )}
+            </div>
+          </div>
+        )
+      }
+
+      {!pieza.data.videoUrl && pieza.data.image && (
+        <img
+          src={pieza.data.image}
+          alt={pieza.data.title}
+          class="w-full rounded-xl shadow-md mb-8 object-cover"
+          loading="eager"
+        />
+      )}
+
+      {pieza.data.videoUrl && pieza.data.image && (
+        <img src={pieza.data.image} alt="" aria-hidden="true" class="hidden" loading="lazy" />
+      )}
+
+      {pieza.data.capitulos.length > 0 && (
+        <div class="mb-8 rounded-xl border bg-card p-5" data-pagefind-ignore>
+          <h2 class="font-bold mb-3">Capítulos del video</h2>
+          <ul class="space-y-2 text-sm">
+            {pieza.data.capitulos.map((c) => (
+              <li class="flex gap-3">
+                <span class="text-primary font-mono shrink-0">{c.tiempo}</span>
+                <span>{c.titulo}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div class="prose lg:prose-lg dark:prose-invert max-w-none backdrop-blur-sm bg-white/30 dark:bg-slate-900/30 rounded-xl p-6 shadow-lg">
+        <Content />
+      </div>
+
+      {!pieza.data.videoUrl && pieza.data.repoUrl && (
+        <div class="mt-6" data-pagefind-ignore>
+          <Button asChild variant="outline">
+            <a href={pieza.data.repoUrl} target="_blank" rel="noopener noreferrer">
+              Ver repositorio
+            </a>
+          </Button>
+        </div>
+      )}
+    </article>
+
+    <div class="mt-8 rounded-xl border bg-card p-5" data-pagefind-ignore>
+      <h2 class="font-bold mb-3">Comparte</h2>
+      <div class="flex flex-wrap gap-3">
+        <Button asChild size="sm" variant="outline">
+          <a
+            href={`https://x.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(canonical)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Compartir en X
+          </a>
+        </Button>
+        <Button asChild size="sm" variant="outline">
+          <a
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Compartir en LinkedIn
+          </a>
+        </Button>
+        <Button asChild size="sm" variant="outline">
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(`${textoCompartir} ${canonical}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Compartir por WhatsApp
+          </a>
+        </Button>
+      </div>
+    </div>
+
+    {relacionadas.length > 0 && (
+      <section class="mt-10" data-pagefind-ignore>
+        <h2 class="text-2xl font-bold mb-4">Sigue con esto</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {relacionadas.map((r) => (
+            <a
+              href={`/contenido/${r.slug}`}
+              class="group rounded-xl border bg-card p-4 hover:shadow-lg hover:border-primary/20 transition-all"
+            >
+              <p class="text-xs text-muted-foreground mb-1">{r.tipo}</p>
+              <h3 class="font-bold text-sm mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                {r.title}
+              </h3>
+              <p class="text-xs text-muted-foreground line-clamp-2">{r.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <div class="mt-10 rounded-xl border bg-card p-6 text-center" data-pagefind-ignore>
+      <h2 class="text-2xl font-bold mb-2">¿Te sirvió?</h2>
+      <p class="text-muted-foreground mb-4">Hay más contenido como este en YouTube.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <Button asChild>
+          <a href={site.youtubeUrl} target="_blank" rel="noopener noreferrer">Ir al canal</a>
+        </Button>
+        <a href="/asesorias" class="text-primary text-sm font-medium hover:underline">
+          ¿Quieres aplicarlo en tu negocio? Ver asesorías →
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-6 text-center" data-pagefind-ignore>
+      <a href="/contenido" class="text-primary font-medium hover:underline">← Volver a todo el contenido</a>
+    </div>
+  </main>
+  <Footer />
+</Layout>

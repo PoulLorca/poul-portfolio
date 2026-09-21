@@ -1,0 +1,29 @@
+[
+  {
+    "prompt": "¿vale la pena automatizar esto?",
+    "lines": [
+      { "label": "proceso", "text": "conciliar facturas (6 h/semana)" },
+      { "label": "solución", "text": "agente + cron diario" },
+      { "label": "costo de operar", "text": "~USD 8/mes" }
+    ],
+    "result": "se paga solo en la primera semana"
+  },
+  {
+    "prompt": "¿necesito un agente o basta un cron?",
+    "lines": [
+      { "label": "tarea", "text": "reporte diario de ventas" },
+      { "label": "solución", "text": "cron + script" },
+      { "label": "costo de operar", "text": "USD 0 en tokens" }
+    ],
+    "result": "no todo necesita IA"
+  },
+  {
+    "prompt": "¿modelo local o API?",
+    "lines": [
+      { "label": "volumen", "text": "2.000 consultas/mes" },
+      { "label": "solución", "text": "API con modelo económico" },
+      { "label": "costo de operar", "text": "~USD 3/mes" }
+    ],
+    "result": "el servidor local no se paga a este volumen"
+  }
+]
