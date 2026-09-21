@@ -9,7 +9,12 @@ import temasData from '@/data/temas.json';
 import site from '@/data/site.json';
 
 export async function getStaticPaths() {
-  const piezas = await getCollection('contenido', ({ data }) => !data.draft);
+  // En dev las piezas draft sí generan página (las verás en los listados);
+  // en producción se excluyen.
+  const piezas = await getCollection(
+    'contenido',
+    ({ data }) => import.meta.env.DEV || !data.draft
+  );
   return piezas.map((p) => ({
     params: { slug: p.id.replace(/\.md$/, '') },
     props: { slug: p.id.replace(/\.md$/, '') },

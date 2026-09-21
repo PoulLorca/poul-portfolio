@@ -1,50 +1,72 @@
 <template>
-  <div
-    class="font-mono text-sm leading-relaxed min-h-[248px] sm:min-h-[228px] transition-opacity duration-300"
-    :class="saliendo ? 'opacity-0' : 'opacity-100'"
-    role="log"
-    aria-live="polite"
-    aria-label="Terminal: problema de negocio, solución y costo de operar"
-  >
-    <template v-if="!hidratado">
-      <div>
-        <span class="text-primary font-bold">$</span>
-        <span class="ml-2">{{ escenas[0]?.prompt }}</span>
-      </div>
-      <div v-for="(l, i) in escenas[0]?.lines ?? []" :key="i" class="mt-1.5">
-        <span class="text-muted-foreground">→ {{ l.label }}:</span>
-        <span class="ml-1">{{ l.text }}</span>
-      </div>
-      <div class="mt-1.5 font-medium text-emerald-600 dark:text-emerald-400">
-        ✓ {{ escenas[0]?.result }}
-      </div>
-    </template>
+  <div ref="root">
+    <!-- Altura fija: el contenido que aparece NO mueve el layout -->
+    <div class="relative h-[352px] sm:h-[340px]">
+      <Transition name="ta-escena" mode="out-in">
+        <div :key="escenaIndex" class="flex h-full flex-col">
+          <!-- Header fijo -->
+          <div class="flex items-center gap-2 border-b border-border pb-2.5 text-[13px]">
+            <span class="text-primary">✻</span>
+            <span class="font-bold">{{ ui.usuario }}</span>
+            <span class="truncate text-muted-foreground">{{ ui.ruta }}</span>
+          </div>
 
-    <template v-else>
-      <div>
-        <span class="text-primary font-bold">$</span>
-        <span class="ml-2">{{ typed }}</span><span
-          v-if="tipando"
-          class="inline-block w-2.5 h-4 bg-primary animate-pulse align-text-bottom ml-0.5"
-          aria-hidden="true"
-        />
-      </div>
-      <div v-for="(l, i) in escena.lines" v-show="i < visibles" :key="`${escenaIndex}-${i}`" class="mt-1.5">
-        <span class="text-muted-foreground">→ {{ l.label }}:</span>
-        <span class="ml-1">{{ l.text }}</span>
-      </div>
-      <div v-if="mostrarResultado" class="mt-1.5 font-medium text-emerald-600 dark:text-emerald-400">
-        ✓ {{ escena.result }}
-      </div>
-      <div v-if="!tipando" class="mt-1.5 flex items-center gap-1 text-muted-foreground">
-        <span class="text-primary font-bold">$</span><span
-          class="inline-block w-2.5 h-4 bg-primary animate-pulse"
-          aria-hidden="true"
-        />
-      </div>
-    </template>
+          <!-- Transcripción (el chat) -->
+          <div class="flex min-h-0 flex-1 flex-col gap-2.5 pt-3 text-[12.5px] leading-snug">
+            <!-- Mensaje enviado: llega aquí cuando se termina de escribir en el input -->
+            <div
+              class="transition-all duration-300 ease-out"
+              :class="enviado ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-1 opacity-0'"
+            >
+              <span class="text-muted-foreground">&gt;</span>
+              <span class="ml-1.5">{{ escena.prompt }}</span>
+            </div>
 
-    <div class="mt-4 flex items-center gap-2" data-pagefind-ignore>
+            <!-- Pasos: aparecen uno por uno solo mientras trabaja -->
+            <div
+              v-for="(p, i) in escena.pasos"
+              :key="i"
+              class="flex flex-col gap-0.5 transition-all duration-300 ease-out"
+              :class="visibles > i ? 'translate-y-0 opacity-100' : 'translate-y-1.5 opacity-0'"
+            >
+              <div>
+                <span class="text-primary">●</span>
+                <span class="ml-1.5 font-bold">{{ p.tool }}</span>
+                <span>({{ p.arg }})</span>
+              </div>
+              <div class="pl-5 text-muted-foreground">
+                <span class="opacity-70">└</span>
+                <span
+                  v-if="p.bold"
+                  class="ml-1 font-bold text-emerald-600 dark:text-emerald-400"
+                >✓ {{ p.output }}</span>
+                <span v-else class="ml-1">{{ p.output }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Indicador de trabajo: SOLO visible mientras está trabajando (fila reservada) -->
+          <div class="h-[18px]">
+            <Transition name="ta-busy">
+              <div v-if="trabajando" class="text-[12.5px]">
+                <span class="text-[#b48cf2]"><span class="ta-girar">✻</span> {{ ui.trabajando }}</span>
+                <span class="text-muted-foreground"> {{ ui.escHint }}</span>
+              </div>
+            </Transition>
+          </div>
+
+          <!-- Input del chat: aquí se escribe la pregunta -->
+          <div class="flex items-center">
+            <span class="text-muted-foreground">&gt;</span>
+            <span class="ml-1.5">{{ typed }}</span>
+            <span class="ta-cursor ml-0.5 inline-block h-4 w-2 bg-primary" />
+          </div>
+        </div>
+      </Transition>
+    </div>
+
+    <!-- Controles -->
+    <div v-if="!reducirMovimiento" class="mt-4 flex items-center gap-2" data-pagefind-ignore>
       <button
         v-for="(_, i) in escenas"
         :key="i"
@@ -66,125 +88,233 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+// ============================================================================
+// CONFIG — textos fijos de la interfaz (las escenas viven en terminal.json)
+// ============================================================================
+const ui = {
+  usuario: 'poul',
+  ruta: '~/negocio',
+  trabajando: 'Trabajando…',
+  escHint: '(esc para interrumpir)',
+};
 
-export interface EscenaLinea {
-  label: string;
-  text: string;
+// Timeline declarativa, como un chatbot:
+// escribir en el input → enviar → "Trabajando…" + pasos → terminar → loop
+const TIMELINE = [
+  { accion: 'escribir', delayMs: 300 },
+  { accion: 'enviar', delayMs: 400 },
+  { accion: 'paso', delayMs: 550, indice: 0 },
+  { accion: 'paso', delayMs: 600, indice: 1 },
+  { accion: 'paso', delayMs: 600, indice: 2 },
+  { accion: 'paso', delayMs: 600, indice: 3 },
+  { accion: 'terminar', delayMs: 350 },
+  { accion: 'espera', delayMs: 2400 },
+  { accion: 'siguiente' },
+] as const;
+
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+
+export interface PasoEscena {
+  tool: string;
+  arg: string;
+  output: string;
+  bold?: boolean;
 }
 
 export interface Escena {
   prompt: string;
-  lines: EscenaLinea[];
-  result: string;
+  promptCorto?: string;
+  pasos: PasoEscena[];
 }
 
 const props = withDefaults(defineProps<{ escenas?: Escena[] }>(), {
   escenas: () => [],
 });
 
+const root = ref<HTMLElement | null>(null);
 const escenaIndex = ref(0);
 const escena = computed<Escena>(
-  () => props.escenas[escenaIndex.value] ?? { prompt: '', lines: [], result: '' }
+  () => props.escenas[escenaIndex.value] ?? { prompt: '', pasos: [] }
 );
 const typed = ref('');
+const enviado = ref(false);
+const listo = ref(false);
 const visibles = ref(0);
-const mostrarResultado = ref(false);
-const tipando = ref(true);
-const saliendo = ref(false);
 const pausado = ref(false);
-const hidratado = ref(false);
+
+const trabajando = computed(() => enviado.value && !listo.value);
 
 let vivo = true;
 let token = 0;
-let reducirMovimiento = false;
+let enPantalla = true;
+let tabVisible = true;
+let reducir = false;
+let io: IntersectionObserver | undefined;
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-const esperarSiPausado = async (mi: number) => {
-  while (pausado.value && vivo && mi === token) await sleep(200);
-};
+const activo = () => !pausado.value && enPantalla && tabVisible;
 
-async function reproducir(e: Escena, mi: number) {
-  typed.value = '';
-  visibles.value = 0;
-  mostrarResultado.value = false;
-  tipando.value = true;
-  saliendo.value = false;
-
-  if (reducirMovimiento) {
-    typed.value = e.prompt;
-    visibles.value = e.lines.length;
-    tipando.value = false;
-    mostrarResultado.value = true;
-    for (let i = 0; i < 30; i++) {
-      if (!vivo || mi !== token) return;
-      await sleep(200);
+// Espera que extiende su plazo mientras la tarjeta está pausada o fuera de vista
+async function espera(ms: number) {
+  let restante = ms;
+  while (vivo && restante > 0) {
+    if (!activo()) {
+      await sleep(150);
+      continue;
     }
-    return;
+    const t = Math.min(100, restante);
+    await sleep(t);
+    restante -= t;
   }
-
-  for (const ch of e.prompt) {
-    if (!vivo || mi !== token) return;
-    await esperarSiPausado(mi);
-    if (!vivo || mi !== token) return;
-    typed.value += ch;
-    await sleep(26);
-  }
-  tipando.value = false;
-
-  for (let i = 0; i < e.lines.length; i++) {
-    if (!vivo || mi !== token) return;
-    await esperarSiPausado(mi);
-    if (!vivo || mi !== token) return;
-    await sleep(380);
-    visibles.value++;
-  }
-
-  await sleep(420);
-  if (!vivo || mi !== token) return;
-  mostrarResultado.value = true;
-
-  for (let i = 0; i < 16; i++) {
-    if (!vivo || mi !== token) return;
-    await esperarSiPausado(mi);
-    await sleep(200);
-  }
-
-  saliendo.value = true;
-  await sleep(320);
 }
 
-async function bucle() {
-  while (vivo && props.escenas.length > 0) {
+// Escribe la pregunta EN EL INPUT letra por letra (~35ms), variante corta en móvil
+async function escribir(mi: number) {
+  const movil = window.matchMedia('(max-width: 640px)').matches;
+  const texto = movil
+    ? (escena.value.promptCorto ?? escena.value.prompt)
+    : escena.value.prompt;
+  typed.value = '';
+  for (const ch of texto) {
+    while (vivo && mi === token && !activo()) await sleep(150);
+    if (!vivo || mi !== token) return;
+    typed.value += ch;
+    await sleep(35);
+  }
+}
+
+async function ejecutar(paso: (typeof TIMELINE)[number], mi: number) {
+  switch (paso.accion) {
+    case 'escribir':
+      await espera(paso.delayMs);
+      if (vivo && mi === token) await escribir(mi);
+      break;
+    case 'enviar': // la pregunta sube a la transcripción y empieza el trabajo
+      await espera(paso.delayMs);
+      if (vivo && mi === token) {
+        typed.value = '';
+        enviado.value = true;
+      }
+      break;
+    case 'paso':
+      await espera(paso.delayMs);
+      if (vivo && mi === token) visibles.value = paso.indice + 1;
+      break;
+    case 'terminar': // trabajo terminado: "Trabajando…" desaparece
+      await espera(paso.delayMs);
+      if (vivo && mi === token) listo.value = true;
+      break;
+    case 'espera':
+      await espera(paso.delayMs);
+      break;
+    case 'siguiente':
+      if (props.escenas.length > 1) {
+        escenaIndex.value = (escenaIndex.value + 1) % props.escenas.length;
+      }
+      break;
+  }
+}
+
+async function correr() {
+  while (vivo) {
     const mi = token;
-    await reproducir(escena.value, mi);
-    if (!vivo) return;
-    if (mi !== token) continue;
-    escenaIndex.value = (escenaIndex.value + 1) % props.escenas.length;
+    typed.value = '';
+    enviado.value = false;
+    listo.value = false;
+    visibles.value = 0;
+    for (const paso of TIMELINE) {
+      if (!vivo || mi !== token) break;
+      await ejecutar(paso, mi);
+    }
   }
 }
 
 const irA = (i: number) => {
-  if (i === escenaIndex.value && hidratado.value) return;
+  if (i === escenaIndex.value) return;
   escenaIndex.value = i;
   token++;
 };
 
-onMounted(() => {
-  reducirMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  hidratado.value = true;
-  document.addEventListener('visibilitychange', onVis);
-  bucle();
-});
-
 const onVis = () => {
-  // Al volver a la pestaña, salta a la siguiente escena para evitar estados a medias
-  if (!document.hidden) return;
+  tabVisible = !document.hidden;
 };
 
-onUnmounted(() => {
+onMounted(() => {
+  reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reducir) {
+    // Conversación completa, estática (trabajo ya terminado)
+    enviado.value = true;
+    listo.value = true;
+    visibles.value = escena.value.pasos.length;
+    return;
+  }
+
+  io = new IntersectionObserver(
+    (entries) => {
+      enPantalla = entries[0]?.isIntersecting ?? true;
+    },
+    { threshold: 0.25 }
+  );
+  if (root.value) io.observe(root.value);
+  document.addEventListener('visibilitychange', onVis);
+
+  correr();
+});
+
+onBeforeUnmount(() => {
   vivo = false;
+  io?.disconnect();
   document.removeEventListener('visibilitychange', onVis);
 });
 </script>
+
+<style scoped>
+/* Transición entre escenas: fade + translateY(8px), 400ms ease-out */
+.ta-escena-enter-active,
+.ta-escena-leave-active {
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+.ta-escena-enter-from,
+.ta-escena-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Entrada/salida del indicador "Trabajando…" */
+.ta-busy-enter-active,
+.ta-busy-leave-active {
+  transition: opacity 0.2s ease-out;
+}
+.ta-busy-enter-from,
+.ta-busy-leave-to {
+  opacity: 0;
+}
+
+@keyframes ta-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+.ta-cursor {
+  animation: 1s step-end infinite ta-cursor;
+}
+
+@keyframes ta-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ta-girar {
+  display: inline-block;
+  animation: 2s linear infinite ta-girar;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-cursor,
+  .ta-girar {
+    animation: none !important;
+  }
+}
+</style>

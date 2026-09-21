@@ -42,9 +42,6 @@
           <div class="rounded-lg bg-foreground/[0.04] dark:bg-black/40 border p-4">
             <TerminalFirma :escenas="escenas" />
           </div>
-          <p class="mt-3 text-xs text-muted-foreground">
-            Cifras ilustrativas. Cada pieza muestra las cuentas reales de su caso.
-          </p>
         </CardContent>
       </Card>
 
@@ -124,10 +121,17 @@ export interface Destacado {
   image?: string;
 }
 
+export interface PasoEscena {
+  tool: string;
+  arg: string;
+  output: string;
+  bold?: boolean;
+}
+
 export interface Escena {
   prompt: string;
-  lines: { label: string; text: string }[];
-  result: string;
+  promptCorto?: string;
+  pasos: PasoEscena[];
 }
 
 withDefaults(defineProps<{

@@ -34,4 +34,4 @@ Un agente con un cron diario que revisa las facturas nuevas, las concilia contra
 
 ## El costo real
 
-Operar este agente cuesta alrededor de USD 8 al mes en tokens. Se paga solo en la primera semana.
+Operar este agente cuesta alrededor de USD 8 al mes en tokens. Se paga en la primera semana.

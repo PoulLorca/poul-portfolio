@@ -10,8 +10,7 @@
           <span class="text-xl font-bold text-primary">Poul Lorca</span>
         </a>
         <p class="text-sm text-muted-foreground max-w-2xl">
-          Tecnología aplicada a negocios, en español. Por Poul Lorca, ingeniero y
-          administrador de empresas con más de 10 años construyendo software.
+          Tecnología aplicada a negocios, en español. Por Poul Lorca con más de 10 años construyendo software.
         </p>
       </div>
 

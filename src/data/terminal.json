@@ -1,29 +1,30 @@
 [
   {
     "prompt": "¿vale la pena automatizar esto?",
-    "lines": [
-      { "label": "proceso", "text": "conciliar facturas (6 h/semana)" },
-      { "label": "solución", "text": "agente + cron diario" },
-      { "label": "costo de operar", "text": "~USD 8/mes" }
-    ],
-    "result": "se paga solo en la primera semana"
+    "pasos": [
+      { "tool": "Bash", "arg": "buscar proceso lento", "output": "conciliar facturas · 6 h/semana" },
+      { "tool": "Agent", "arg": "agente + cron diario", "output": "corre solo, sin supervisión" },
+      { "tool": "Bash", "arg": "calcular costo", "output": "~USD 8/mes en tokens" },
+      { "tool": "Bash", "arg": "git commit -m \"vale la pena\"", "output": "se paga solo en la primera semana", "bold": true }
+    ]
   },
   {
     "prompt": "¿necesito un agente o basta un cron?",
-    "lines": [
-      { "label": "tarea", "text": "reporte diario de ventas" },
-      { "label": "solución", "text": "cron + script" },
-      { "label": "costo de operar", "text": "USD 0 en tokens" }
-    ],
-    "result": "no todo necesita IA"
+    "promptCorto": "¿agente o basta un cron?",
+    "pasos": [
+      { "tool": "Bash", "arg": "mirar la tarea", "output": "reporte diario de ventas" },
+      { "tool": "Bash", "arg": "probar lo simple", "output": "cron + script, sin IA" },
+      { "tool": "Bash", "arg": "calcular costo", "output": "USD 0 en tokens" },
+      { "tool": "Bash", "arg": "git commit -m \"basta un cron\"", "output": "no todo necesita IA", "bold": true }
+    ]
   },
   {
     "prompt": "¿modelo local o API?",
-    "lines": [
-      { "label": "volumen", "text": "2.000 consultas/mes" },
-      { "label": "solución", "text": "API con modelo económico" },
-      { "label": "costo de operar", "text": "~USD 3/mes" }
-    ],
-    "result": "el servidor local no se paga a este volumen"
+    "pasos": [
+      { "tool": "Bash", "arg": "medir volumen", "output": "2.000 consultas/mes" },
+      { "tool": "Bash", "arg": "comparar opciones", "output": "API con modelo económico" },
+      { "tool": "Bash", "arg": "calcular costo", "output": "~USD 3/mes" },
+      { "tool": "Bash", "arg": "git commit -m \"gana la api\"", "output": "el servidor local no se paga a este volumen", "bold": true }
+    ]
   }
 ]
