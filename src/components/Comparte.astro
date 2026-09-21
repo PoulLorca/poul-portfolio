@@ -1,0 +1,214 @@
+---
+import X from 'simple-icons-astro/X';
+import Whatsapp from 'simple-icons-astro/Whatsapp';
+import Telegram from 'simple-icons-astro/Telegram';
+import Facebook from 'simple-icons-astro/Facebook';
+import Reddit from 'simple-icons-astro/Reddit';
+import Ycombinator from 'simple-icons-astro/Ycombinator';
+import Gmail from 'simple-icons-astro/Gmail';
+
+interface Props {
+  url: string;
+  title: string;
+}
+
+const { url, title } = Astro.props;
+const texto = encodeURIComponent(title);
+const enlace = encodeURIComponent(url);
+---
+
+<div class="social-share-row flex flex-wrap items-center gap-2">
+  <a
+    class="social-share-btn"
+    href={`https://x.com/intent/tweet?text=${texto}&url=${enlace}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir en X"
+    title="Compartir en X"
+  >
+    <X size={16} fill="currentColor" />
+  </a>
+
+  <a
+    class="social-share-btn"
+    href={`https://www.linkedin.com/sharing/share-offsite/?url=${enlace}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir en LinkedIn"
+    title="Compartir en LinkedIn"
+  >
+    <!-- simple-icons-astro no exporta LinkedIn; path oficial de Simple Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <title>LinkedIn</title>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path>
+    </svg>
+  </a>
+
+  <a
+    class="social-share-btn"
+    href={`https://wa.me/?text=${texto}%20${enlace}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir por WhatsApp"
+    title="Compartir por WhatsApp"
+  >
+    <Whatsapp size={16} fill="currentColor" />
+  </a>
+
+  <a
+    class="social-share-btn"
+    href={`https://t.me/share/url?url=${enlace}&text=${texto}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir por Telegram"
+    title="Compartir por Telegram"
+  >
+    <Telegram size={16} fill="currentColor" />
+  </a>
+
+  <a
+    class="social-share-btn"
+    href={`https://www.facebook.com/sharer/sharer.php?u=${enlace}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir en Facebook"
+    title="Compartir en Facebook"
+  >
+    <Facebook size={16} fill="currentColor" />
+  </a>
+
+  <a
+    class="social-share-btn"
+    href={`https://www.reddit.com/submit?url=${enlace}&title=${texto}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir en Reddit"
+    title="Compartir en Reddit"
+  >
+    <Reddit size={16} fill="currentColor" />
+  </a>
+
+  <a
+    class="social-share-btn"
+    href={`https://news.ycombinator.com/submitlink?u=${enlace}&t=${texto}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir en Hacker News"
+    title="Compartir en Hacker News"
+  >
+    <Ycombinator size={16} fill="currentColor" />
+  </a>
+
+  <a
+    class="social-share-btn"
+    href={`mailto:?subject=${texto}&body=${texto}%0A${enlace}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Compartir por correo"
+    title="Compartir por correo"
+  >
+    <Gmail size={16} fill="currentColor" />
+  </a>
+
+  <button
+    id="copiar-enlace"
+    type="button"
+    class="social-share-btn"
+    aria-label="Copiar enlace"
+    title="Copiar enlace"
+  >
+    <svg
+      class="icono-enlace"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      width="16"
+      height="16"
+      aria-hidden="true"
+    >
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+    </svg>
+    <svg
+      class="icono-copiado"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      width="16"
+      height="16"
+      aria-hidden="true"
+    >
+      <path d="M20 6 9 17l-5-5"></path>
+    </svg>
+  </button>
+
+  <span id="copiado-aviso" class="hidden text-xs font-medium text-emerald-600 dark:text-emerald-400">
+    ¡Copiado!
+  </span>
+</div>
+
+<style>
+  .social-share-btn {
+    display: grid;
+    place-items: center;
+    height: 2.25rem;
+    width: 2.25rem;
+    padding: 0;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .social-share-btn :global(svg) {
+    height: 1rem;
+    width: 1rem;
+  }
+  .social-share-btn:hover,
+  .social-share-btn:focus-visible {
+    color: var(--primary);
+    border-color: color-mix(in oklab, var(--primary) 40%, transparent);
+    transform: scale(1.1);
+  }
+  .social-share-btn .icono-copiado {
+    display: none;
+  }
+  .social-share-btn.copiado .icono-enlace {
+    display: none;
+  }
+  .social-share-btn.copiado .icono-copiado {
+    display: block;
+  }
+  .social-share-btn.copiado {
+    color: var(--primary);
+    border-color: color-mix(in oklab, var(--primary) 40%, transparent);
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('copiar-enlace');
+  const aviso = document.getElementById('copiado-aviso');
+  let avisoTimer: ReturnType<typeof setTimeout>;
+
+  btn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      btn.classList.add('copiado');
+      aviso?.classList.remove('hidden');
+      clearTimeout(avisoTimer);
+      avisoTimer = setTimeout(() => {
+        btn.classList.remove('copiado');
+        aviso?.classList.add('hidden');
+      }, 1800);
+    } catch {
+      /* portapapeles no disponible */
+    }
+  });
+</script>

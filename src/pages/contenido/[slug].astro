@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getCollection, render } from 'astro:content';
 import temasData from '@/data/temas.json';
-import site from '@/data/site.json';
+import Comparte from '@/components/Comparte.astro';
 
 export async function getStaticPaths() {
   // En dev las piezas draft sí generan página (las verás en los listados);
@@ -41,8 +41,10 @@ const temaTitulo =
   pieza.data.tema;
 
 // Relacionadas: mismo tema primero, luego mismo tipo; excluye la actual; máx 3.
+// En dev se incluyen los drafts para poder navegar la maqueta completa.
 const todas = (await getCollection('contenido')).filter(
-  (p) => !p.data.draft && p.id.replace(/\.md$/, '') !== slug
+  (p) =>
+    (import.meta.env.DEV || !p.data.draft) && p.id.replace(/\.md$/, '') !== slug
 );
 const relacionadas = [...todas]
   .sort((a, b) => {
@@ -106,6 +108,9 @@ const textoCompartir = `${pieza.data.title} — Poul Lorca`;
             <Badge variant="outline">{h}</Badge>
           </a>
         ))}
+        {pieza.data.draft && import.meta.env.DEV && (
+          <Badge variant="outline" class="border-dashed text-muted-foreground">Borrador</Badge>
+        )}
         {pieza.data.videoUrl && <Badge class="bg-black/70 text-white">Video</Badge>}
       </div>
 
@@ -195,35 +200,7 @@ const textoCompartir = `${pieza.data.title} — Poul Lorca`;
 
     <div class="mt-8 rounded-xl border bg-card p-5" data-pagefind-ignore>
       <h2 class="font-bold mb-3">Comparte</h2>
-      <div class="flex flex-wrap gap-3">
-        <Button asChild size="sm" variant="outline">
-          <a
-            href={`https://x.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(canonical)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Compartir en X
-          </a>
-        </Button>
-        <Button asChild size="sm" variant="outline">
-          <a
-            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Compartir en LinkedIn
-          </a>
-        </Button>
-        <Button asChild size="sm" variant="outline">
-          <a
-            href={`https://wa.me/?text=${encodeURIComponent(`${textoCompartir} ${canonical}`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Compartir por WhatsApp
-          </a>
-        </Button>
-      </div>
+      <Comparte url={canonical} title={textoCompartir} />
     </div>
 
     {relacionadas.length > 0 && (
@@ -246,17 +223,15 @@ const textoCompartir = `${pieza.data.title} — Poul Lorca`;
       </section>
     )}
 
-    <div class="mt-10 rounded-xl border bg-card p-6 text-center" data-pagefind-ignore>
-      <h2 class="text-2xl font-bold mb-2">¿Te sirvió?</h2>
-      <p class="text-muted-foreground mb-4">Hay más contenido como este en YouTube.</p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <Button asChild>
-          <a href={site.youtubeUrl} target="_blank" rel="noopener noreferrer">Ir al canal</a>
-        </Button>
-        <a href="/asesorias" class="text-primary text-sm font-medium hover:underline">
-          ¿Quieres aplicarlo en tu negocio? Ver asesorías →
-        </a>
-      </div>
+    <div class="mt-10 rounded-xl border border-primary/30 bg-primary/[0.04] dark:bg-primary/[0.06] p-6 md:p-8 text-center" data-pagefind-ignore>
+      <h2 class="text-2xl md:text-3xl font-bold mb-3">¿Te sirvió?</h2>
+      <p class="text-muted-foreground max-w-xl mx-auto mb-6 text-balance">
+        ¿Te gustaría implementar este sistema pero no sabes por dónde empezar? 
+        Yo te ayudo con una asesoría personalizada para adaptarlo y ponerlo a funcionar en tu proyecto.
+      </p>
+      <Button asChild size="lg">
+        <a href="/asesorias">Ver asesorías →</a>
+      </Button>
     </div>
 
     <div class="mt-6 text-center" data-pagefind-ignore>
@@ -265,3 +240,4 @@ const textoCompartir = `${pieza.data.title} — Poul Lorca`;
   </main>
   <Footer />
 </Layout>
+
