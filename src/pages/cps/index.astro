@@ -1,0 +1,122 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import CpsRadar from '@/components/CpsRadar.vue';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { getCollection } from 'astro:content';
+import { splitSections, renderMd, seoDescription } from '@/lib/cps';
+
+const currentPathFromAstro = Astro.url.pathname;
+
+const meses = (await getCollection('cps')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime() || b.id.localeCompare(a.id)
+);
+
+const latest = meses[0];
+const latestId = latest ? latest.id.replace(/\.md$/, '') : '';
+let veredictoHtml = '';
+let veredictoMd = '';
+let latestModels: unknown[] = [];
+if (latest) {
+  const secciones = splitSections(latest.body ?? '');
+  const veredicto = secciones.find((s) => s.slug === 'veredicto-del-mes') ?? secciones[0];
+  veredictoMd = veredicto?.md ?? '';
+  veredictoHtml = veredictoMd ? renderMd(veredictoMd) : '';
+  latestModels = JSON.parse(JSON.stringify(latest.data.models));
+}
+
+const description = veredictoMd
+  ? seoDescription(veredictoMd)
+  : 'Cuánto cuesta que una IA resuelva bien una tarea administrativa: reporte mensual por modelo y flujo.';
+
+const fechaLatest = latest
+  ? latest.data.date.toLocaleDateString('es', { year: 'numeric', month: 'long' })
+  : '';
+---
+
+<Layout
+  title="CPS: cuánto cuesta que una IA resuelva bien una tarea administrativa — Poul Lorca"
+  description={description}
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main class="container mx-auto max-w-3xl px-4 py-12" data-pagefind-body>
+    <nav class="text-sm mb-6" aria-label="Miga de pan" data-pagefind-ignore>
+      <a href="/" class="hover:text-primary">Inicio</a>
+      <span class="mx-2 text-muted-foreground">/</span>
+      <span>CPS</span>
+    </nav>
+
+    <div class="text-center mb-10" data-pagefind-ignore>
+      <h1 class="text-4xl font-bold mb-3">CPS</h1>
+      <p class="text-lg text-muted-foreground text-balance">
+        Cuánto cuesta que una IA resuelva bien una tarea administrativa.
+      </p>
+    </div>
+
+    {latest ? (
+      <section class="mb-12">
+        <a href={`/cps/${latestId}`} class="hover:text-primary">
+          <h2 class="text-2xl md:text-3xl font-bold mb-2 text-balance">{latest.data.title}</h2>
+        </a>
+        <p class="text-sm text-muted-foreground mb-4">
+          <time datetime={latest.data.date.toISOString()}>{fechaLatest}</time>
+          {' · '}{latest.data.dataset}
+          {' · '}{latest.data.models.length} {latest.data.models.length === 1 ? 'modelo' : 'modelos'}
+          {latest.data.status === 'incompleta' && (
+            <span class="ml-2 inline-flex align-middle">
+              <Badge variant="outline">incompleta</Badge>
+            </span>
+          )}
+        </p>
+
+        <h3 class="text-xl font-bold mb-3">Veredicto del mes</h3>
+        <div class="prose lg:prose-lg dark:prose-invert max-w-none backdrop-blur-sm bg-white/30 dark:bg-slate-900/30 rounded-xl p-6 shadow-lg cps-prose">
+          <Fragment set:html={veredictoHtml} />
+        </div>
+
+        <div class="mt-6" data-pagefind-ignore>
+          <CpsRadar client:visible models={latestModels} />
+        </div>
+
+        <div class="mt-6" data-pagefind-ignore>
+          <Button asChild>
+            <a href={`/cps/${latestId}`}>Ver reporte completo →</a>
+          </Button>
+        </div>
+      </section>
+    ) : (
+      <p class="text-center text-muted-foreground">Aún no hay reportes CPS publicados.</p>
+    )}
+
+    {meses.length > 0 && (
+      <section data-pagefind-ignore>
+        <h2 class="text-2xl font-bold mb-4">Historial</h2>
+        <div class="space-y-3">
+          {meses.map((m) => {
+            const id = m.id.replace(/\.md$/, '');
+            const fecha = m.data.date.toLocaleDateString('es', { year: 'numeric', month: 'long' });
+            return (
+              <a
+                href={`/cps/${id}`}
+                class="block rounded-xl border bg-card p-4 hover:shadow-lg hover:border-primary/20 transition-all"
+              >
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="font-bold group-hover:text-primary">{m.data.title}</span>
+                  {m.data.status === 'incompleta' && <Badge variant="outline">incompleta</Badge>}
+                </div>
+                <p class="text-sm text-muted-foreground mt-1">
+                  <time datetime={m.data.date.toISOString()}>{fecha}</time>
+                  {' · '}{m.data.dataset}
+                  {' · '}{m.data.models.length} {m.data.models.length === 1 ? 'modelo' : 'modelos'}
+                </p>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
+  </main>
+  <Footer />
+</Layout>

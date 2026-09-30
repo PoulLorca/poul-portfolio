@@ -152,3 +152,10 @@ body::before {
   background-image: 
     radial-gradient(var(--foreground) 0.8px, transparent 0.8px);
 }
+
+/* CPS: tablas desplazables en móvil sin desbordar la página (HTML inyectado con set:html). */
+.cps-prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}

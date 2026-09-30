@@ -1,0 +1,146 @@
+---
+import Layout from '@/layouts/main.astro';
+import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
+import CpsRadar from '@/components/CpsRadar.vue';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Comparte from '@/components/Comparte.astro';
+import { getCollection } from 'astro:content';
+import { splitSections, renderMd, seoDescription } from '@/lib/cps';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+export async function getStaticPaths() {
+  const meses = (await getCollection('cps')).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime() || b.id.localeCompare(a.id)
+  );
+  return meses.map((m, i) => {
+    const id = m.id.replace(/\.md$/, '');
+    const next = i > 0 ? meses[i - 1] : undefined;
+    const prev = i < meses.length - 1 ? meses[i + 1] : undefined;
+    return {
+      params: { mes: id },
+      props: {
+        mes: id,
+        prev: prev ? { id: prev.id.replace(/\.md$/, ''), title: prev.data.title } : null,
+        next: next ? { id: next.id.replace(/\.md$/, ''), title: next.data.title } : null,
+      },
+    };
+  });
+}
+
+const { mes, prev, next } = Astro.props;
+const entry = (await getCollection('cps')).find((p) => p.id.replace(/\.md$/, '') === mes);
+
+if (!entry) {
+  return Astro.redirect('/cps', 404);
+}
+
+const { data } = entry;
+const currentPathFromAstro = Astro.url.pathname;
+
+// Veredicto primero, luego radar, luego el resto de secciones en su orden original.
+const secciones = splitSections(entry.body ?? '');
+const idxVeredicto = secciones.findIndex((s) => s.slug === 'veredicto-del-mes');
+const veredicto = idxVeredicto >= 0 ? secciones[idxVeredicto] : secciones[0];
+const resto = secciones.filter((s) => s !== veredicto);
+const veredictoHtml = veredicto?.md ? renderMd(veredicto.md) : '';
+const restoHtml = resto.map((s) => renderMd(`## ${s.title}\n\n${s.md}`)).join('\n');
+const models = JSON.parse(JSON.stringify(data.models));
+
+// El botón PDF solo aparece si el archivo existe en `public/`.
+let pdfExiste = false;
+if (data.pdf) {
+  const ruta = fileURLToPath(new URL('../../../public' + data.pdf, import.meta.url));
+  pdfExiste = existsSync(ruta);
+}
+
+const description = veredicto?.md
+  ? seoDescription(veredicto.md)
+  : `${data.title}: reporte mensual del costo por solución.`;
+const canonical = new URL(`/cps/${mes}`, Astro.site).href;
+const fecha = data.date.toLocaleDateString('es', { year: 'numeric', month: 'long', day: 'numeric' });
+const textoCompartir = `${data.title} — Poul Lorca`;
+---
+
+<Layout
+  title={`${data.title} — Poul Lorca`}
+  description={description}
+  url={canonical}
+  type="article"
+>
+  <Navbar client:load currentPath={currentPathFromAstro} />
+  <main class="container mx-auto max-w-3xl px-4 py-12">
+    <nav class="text-sm mb-6" aria-label="Miga de pan" data-pagefind-ignore>
+      <a href="/" class="hover:text-primary">Inicio</a>
+      <span class="mx-2 text-muted-foreground">/</span>
+      <a href="/cps" class="hover:text-primary">CPS</a>
+      <span class="mx-2 text-muted-foreground">/</span>
+      <span>{mes}</span>
+    </nav>
+
+    <article data-pagefind-body>
+      <div class="flex flex-wrap items-center gap-2 mb-4" data-pagefind-ignore>
+        <Badge variant="secondary">{data.dataset}</Badge>
+        {data.status === 'incompleta' && <Badge variant="outline">incompleta</Badge>}
+      </div>
+
+      <p class="text-sm text-muted-foreground mb-2">
+        <time datetime={data.date.toISOString()}>{fecha}</time>
+        {' · '}Por Poul Lorca
+      </p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4 text-balance" data-pagefind-weight="10">
+        {data.title}
+      </h1>
+      <p class="text-sm text-muted-foreground mb-6" data-pagefind-ignore>
+        {data.models.length} {data.models.length === 1 ? 'modelo evaluado' : 'modelos evaluados'}
+        {' · '}Costos: {data.cost_source}
+      </p>
+
+      {pdfExiste && data.pdf && (
+        <div class="mb-6" data-pagefind-ignore>
+          <Button asChild>
+            <a href={data.pdf} target="_blank" rel="noopener noreferrer">Descargar PDF</a>
+          </Button>
+        </div>
+      )}
+
+      <div class="prose lg:prose-lg dark:prose-invert max-w-none backdrop-blur-sm bg-white/30 dark:bg-slate-900/30 rounded-xl p-6 shadow-lg cps-prose">
+        <h2>Veredicto del mes</h2>
+        <Fragment set:html={veredictoHtml} />
+      </div>
+
+      <div class="mt-6" data-pagefind-ignore>
+        <CpsRadar client:visible models={models} />
+      </div>
+
+      <div class="prose lg:prose-lg dark:prose-invert max-w-none backdrop-blur-sm bg-white/30 dark:bg-slate-900/30 rounded-xl p-6 shadow-lg cps-prose mt-6">
+        <Fragment set:html={restoHtml} />
+      </div>
+    </article>
+
+    <div class="mt-8 rounded-xl border bg-card p-5" data-pagefind-ignore>
+      <h2 class="font-bold mb-3">Comparte</h2>
+      <Comparte url={canonical} title={textoCompartir} />
+    </div>
+
+    {(prev || next) && (
+      <nav class="mt-10 flex items-center justify-between gap-4" aria-label="Meses" data-pagefind-ignore>
+        {prev ? (
+          <a href={`/cps/${prev.id}`} class="text-primary font-medium hover:underline">← {prev.title}</a>
+        ) : (
+          <span />
+        )}
+        {next && (
+          <a href={`/cps/${next.id}`} class="text-primary font-medium hover:underline text-right">{next.title} →</a>
+        )}
+      </nav>
+    )}
+
+    <div class="mt-6 text-center" data-pagefind-ignore>
+      <a href="/cps" class="text-primary font-medium hover:underline">← Volver al índice CPS</a>
+    </div>
+  </main>
+  <Footer />
+</Layout>

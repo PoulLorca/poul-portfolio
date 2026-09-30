@@ -219,6 +219,7 @@ const links = [
   { href: '/', label: 'Inicio' },
   { href: '/contenido', label: 'Contenido' },
   { href: '/temas', label: 'Temas' },
+  { href: '/cps', label: 'CPS' },
   { href: '/asesorias', label: 'Asesorías' },
 ];
 
