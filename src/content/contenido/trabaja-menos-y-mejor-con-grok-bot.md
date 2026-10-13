@@ -1,7 +1,7 @@
 ---
 title: "Trabaja menos y mejor con Grok Bot: Tu equipo IA en la nube"
 description: "Descubre cómo Grok Bot te permite crear un equipo de agentes de Inteligencia Artificial autónomos que trabaja para ti en la nube. ¡Aumenta tu productividad hoy!"
-date: 2026-11-10
+date: 2026-10-05
 tema: "agentes"
 tipo: "tutorial"
 tags: ["agentes", "grok", "automatización"]
